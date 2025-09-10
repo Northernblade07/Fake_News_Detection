@@ -1,4 +1,4 @@
-// app/api/auth/password/forgot/route.ts
+// app/api/auth/forgot-password/route.ts
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";

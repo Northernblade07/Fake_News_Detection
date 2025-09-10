@@ -6,11 +6,13 @@ import User, { IUser } from "@/app/models/user";
 import { generateOTP, hashOTP, otpExpiryTimestamp } from "@/app/lib/otp";
 import { sendMail, otpEmailHtml } from "@/app/lib/mailer";
 import bcrypt from "bcrypt";
+import { connectToDatabase } from "@/app/lib/db";
 
 const PWD_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS ?? 12);
 
 export async function POST(req: Request) {
   try {
+     await connectToDatabase();
     const body = await req.json();
     const email = String(body?.email ?? "").toLowerCase().trim();
     const password = String(body?.password ?? "");
@@ -55,6 +57,9 @@ export async function POST(req: Request) {
       text: `Your OTP is: ${otp}`,
     });
 
+    if (process.env.NODE_ENV === "development") {
+      return NextResponse.json({ message: "OTP sent", otp }, { status: 200 });
+    }
     return NextResponse.json({ message: "OTP sent" }, { status: 200 });
   } catch (e: unknown) {
     console.error("Register error:", e);

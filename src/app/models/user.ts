@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 
 export interface IUser extends Document {
   _id:mongoose.Types.ObjectId;
+  name:string;
   email: string;
   password?: string;                // hashed
   verified: boolean;
@@ -32,7 +33,7 @@ const userSchema = new Schema<IUser>(
     password: {
       type: String,
       required: [true, "Password is required"],
-      minlength: [6, "Password must be at least 6 characters"],
+      minlength: [8, "Password must be at least 6 characters"],
       select: false,                 // hide by default
     },
     verified: { type: Boolean, default: false },
@@ -59,14 +60,14 @@ const userSchema = new Schema<IUser>(
 );
 
 // Case‑insensitive unique email at storage level (MongoDB collation)
-userSchema.index({ email: 1 }, { unique: true, collation: { locale: "en", strength: 2 } });
+// userSchema.index({ email: 1 }, { unique: true, collation: { locale: "en", strength: 2 } });
 
-userSchema.pre("save", async function (next) {
-  if (this.isModified("password") && this.password) {
-    this.password = await bcrypt.hash(this.password, 10);
-  }
-  next();
-});
+// userSchema.pre("save", async function (next) {
+//   if (this.isModified("password") && this.password) {
+//     this.password = await bcrypt.hash(this.password, 10);
+//   }
+//   next();
+// });
 
 userSchema.methods.comparePassword = async function (candidate: string): Promise<boolean> {
   if (!this.password) return false; // ensure queries use .select('+password') when needed
