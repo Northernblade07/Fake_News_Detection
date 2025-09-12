@@ -1,0 +1,72 @@
+{
+  "app": { "name": "सत्यशील्ड" },
+  "nav": {
+    "SatyaShield": "सत्यशील्ड",
+    "home": "मुख्यपृष्ठ",
+    "explore": "अन्वेषण",
+    "dashboard": "डॅशबोर्ड",
+    "profile": "प्रोफाइल",
+    "login": "लॉगिन",
+    "register": "नोंदणी",
+    "logout": "लॉगआउट",
+    "language": "भाषा"
+  },
+  "common": {
+    "detect": "ओळखा",
+    "submit": "सादर करा",
+    "cancel": "रद्द करा",
+    "upload": "अपलोड करा",
+    "or": "किंवा",
+    "loading": "लोड करत आहे…",
+    "success": "यश",
+    "error": "काहीतरी चूक झाली",
+    "copied": "कॉपी केले",
+    "unknown": "अज्ञात"
+  },
+  "auth": {
+    "welcomeBack": "पुन्हा स्वागत आहे",
+    "createAccount": "आपले खाते तयार करा",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "username": "वापरकर्तानाव",
+    "signIn": "साइन इन",
+    "signingIn": "साइन इन करत आहे…",
+    "signUp": "खाते तयार करा",
+    "signingUp": "खाते तयार केले जात आहे…",
+    "forgotPassword": "पासवर्ड विसरलात?",
+    "haveAccount": "आधीपासून खाते आहे? लॉगिन करा",
+    "newHere": "नवीन आहात? नोंदणी करा"
+  },
+  "dashboard": {
+    "title": "बातमी ओळखा",
+    "subtitle": "AI सह विश्लेषण करण्यासाठी मजकूर सबमिट करा किंवा मीडिया अपलोड करा.",
+    "inputType": "इनपुट प्रकार",
+    "titleLabel": "शीर्षक (ऐच्छिक)",
+    "sourceUrl": "स्रोत URL (ऐच्छिक)",
+    "textContent": "मजकूर सामग्री",
+    "fileLabel": "फाइल अपलोड करा",
+    "selected": "निवडले",
+    "chars": "अक्षरे",
+    "result": "परिणाम",
+    "yourActivity": "तुमची क्रिया",
+    "metrics": "मेट्रिक्स"
+  },
+  "news": {
+    "latest": "ताजी बातमी",
+    "seeMore": "अधिक पहा",
+    "noResults": "दाखविण्यासाठी कोणतीही बातमी नाही",
+    "fake": "खोटे",
+    "real": "खरे",
+    "unknown": "अज्ञात",
+    "detectNow": "आता ओळखा"
+  },
+  "profile": {
+    "title": "तुमचा प्रोफाईल",
+    "info": "प्रोफाईल माहिती",
+    "activity": "अलीकडील कृती",
+    "stats": "ओळख आकडेवारी"
+  },
+  "footer": {
+    "rights": "सर्व अधिकार राखीव."
+  }
+}

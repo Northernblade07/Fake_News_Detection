@@ -1,0 +1,72 @@
+{
+  "app": { "name": "ساتیا شیلڈ" },
+  "nav": {
+    "SatyaShield": "सत्यशील्ड",
+    "home": "ہوم",
+    "explore": "تلاش",
+    "dashboard": "ڈیش بورڈ",
+    "profile": "پروفائل",
+    "login": "لاگ ان",
+    "register": "رجسٹر",
+    "logout": "لاگ آؤٹ",
+    "language": "زبان"
+  },
+  "common": {
+    "detect": "تشخیص کریں",
+    "submit": "جمع کریں",
+    "cancel": "منسوخ کریں",
+    "upload": "اپ لوڈ کریں",
+    "or": "یا",
+    "loading": "لوڈ ہو رہا ہے…",
+    "success": "کامیابی",
+    "error": "کچھ غلط ہو گیا",
+    "copied": "نقل کیا گیا",
+    "unknown": "نامعلوم"
+  },
+  "auth": {
+    "welcomeBack": "واپسی پر خوش آمدید",
+    "createAccount": "اپنا اکاؤنٹ بنائیں",
+    "email": "ای میل",
+    "password": "پاس ورڈ",
+    "username": "صارف نام",
+    "signIn": "سائن ان",
+    "signingIn": "سائن ان ہو رہا ہے…",
+    "signUp": "اکاؤنٹ بنائیں",
+    "signingUp": "اکاؤنٹ بنایا جا رہا ہے…",
+    "forgotPassword": "پاس ورڈ بھول گئے؟",
+    "haveAccount": "پہلے سے اکاؤنٹ ہے؟ لاگ ان کریں",
+    "newHere": "نئے ہیں؟ رجسٹر کریں"
+  },
+  "dashboard": {
+    "title": "خبروں کا پتہ لگائیں",
+    "subtitle": "AI سے تجزیہ کے لیے متن جمع کریں یا میڈیا اپ لوڈ کریں۔",
+    "inputType": "ان پٹ قسم",
+    "titleLabel": "عنوان (اختیاری)",
+    "sourceUrl": "ذریعہ URL (اختیاری)",
+    "textContent": "متن کا مواد",
+    "fileLabel": "فائل اپ لوڈ کریں",
+    "selected": "منتخب",
+    "chars": "حروف",
+    "result": "نتیجہ",
+    "yourActivity": "آپ کی سرگرمی",
+    "metrics": "میٹرکس"
+  },
+  "news": {
+    "latest": "تازہ ترین خبریں",
+    "seeMore": "مزید دیکھیں",
+    "noResults": "دکھانے کے لیے خبریں نہیں ہیں",
+    "fake": "جعلی",
+    "real": "حقیقی",
+    "unknown": "نامعلوم",
+    "detectNow": "ابھی تشخیص کریں"
+  },
+  "profile": {
+    "title": "آپ کی پروفائل",
+    "info": "پروفائل معلومات",
+    "activity": "حالیہ سرگرمی",
+    "stats": "تشخیص کے اعداد و شمار"
+  },
+  "footer": {
+    "rights": "تمام حقوق محفوظ ہیں۔"
+  }
+}

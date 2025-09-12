@@ -2,21 +2,24 @@
 import { getRequestConfig } from "next-intl/server";
 import { cookies as nextCookies } from "next/headers";
 
-// Supported locales
-const SUPPORTED = ["en","hi","bn","mr","te","ta","gu","ur","kn","or","ml","pa"] as const;
+export const SUPPORTED = [
+  "en","hi","bn","mr","te","ta","gu","ur","kn","or","ml","pa"
+] as const;
+
 export type Locale = (typeof SUPPORTED)[number];
 
 export default getRequestConfig(async () => {
-  // Type-safe cast: cookies() has get() method
-  const cookieStore = nextCookies() as unknown as {
-    get: (name: string) => { value: string } | undefined;
-  };
+  // Await cookies()
+  const cookieStore = await nextCookies();
 
-  const c = cookieStore.get("lang")?.value;
-  const locale: Locale = c && SUPPORTED.includes(c as Locale) ? (c as Locale) : "en";
+  // Safe get
+  const raw = cookieStore.get("lang")?.value;
+  const locale: Locale = raw && SUPPORTED.includes(raw as Locale) ? (raw as Locale) : "en";
 
-  // Dynamically import messages
-  const messages = (await import(`../../public/messages/${locale}.json`)).default;
+  // Dynamically import messages from local folder
+  const messages: Record<string, unknown> = (
+    await import(`./messages/${locale}.json`) // <-- your folder name
+  ).default;
 
   return { locale, messages };
 });

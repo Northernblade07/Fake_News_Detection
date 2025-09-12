@@ -1,0 +1,72 @@
+{
+  "app": { "name": "ਸਤਿਆਸ਼ੀਲਡ" },
+  "nav": {
+    "SatyaShield": "सत्यशील्ड",
+    "home": "ਹੋਮ",
+    "explore": "ਖੋਜੋ",
+    "dashboard": "ਡੈਸ਼ਬੋਰਡ",
+    "profile": "ਪ੍ਰੋਫਾਈਲ",
+    "login": "ਲੌਗਇਨ",
+    "register": "ਰਜਿਸਟਰ",
+    "logout": "ਲੌਗਆਉਟ",
+    "language": "ਭਾਸ਼ਾ"
+  },
+  "common": {
+    "detect": "ਪਤਾ ਲਗਾਓ",
+    "submit": "ਜਮ੍ਹਾਂ ਕਰੋ",
+    "cancel": "ਰੱਦ ਕਰੋ",
+    "upload": "ਅਪਲੋਡ",
+    "or": "ਜਾਂ",
+    "loading": "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…",
+    "success": "ਸਫਲਤਾ",
+    "error": "ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ",
+    "copied": "ਕਾਪੀ ਕੀਤਾ ਗਿਆ",
+    "unknown": "ਅਣਜਾਣ"
+  },
+  "auth": {
+    "welcomeBack": "ਵਾਪਸੀ 'ਤੇ ਸੁਆਗਤ ਹੈ",
+    "createAccount": "ਆਪਣਾ ਖਾਤਾ ਬਣਾਓ",
+    "email": "ਈਮੇਲ",
+    "password": "ਪਾਸਵਰਡ",
+    "username": "ਯੂਜ਼ਰਨੇਮ",
+    "signIn": "ਸਾਈਨ ਇਨ",
+    "signingIn": "ਸਾਈਨ ਇਨ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ…",
+    "signUp": "ਅਕਾਉਂਟ ਬਣਾਓ",
+    "signingUp": "ਅਕਾਉਂਟ ਬਣਾਇਆ ਜਾ ਰਿਹਾ ਹੈ…",
+    "forgotPassword": "ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ?",
+    "haveAccount": "ਪਹਿਲਾਂ ਹੀ ਖਾਤਾ ਹੈ? ਲੌਗਇਨ",
+    "newHere": "ਨਵੇਂ ਹੋ? ਰਜਿਸਟਰ ਕਰੋ"
+  },
+  "dashboard": {
+    "title": "ਖਬਰਾਂ ਦਾ ਪਤਾ ਲਗਾਓ",
+    "subtitle": "AI ਨਾਲ ਵਿਸ਼ਲੇਸ਼ਣ ਲਈ ਟੈਕਸਟ ਜਮ੍ਹਾਂ ਕਰੋ ਜਾਂ ਮੀਡੀਆ ਅਪਲੋਡ ਕਰੋ।",
+    "inputType": "ਇਨਪੁੱਟ ਕਿਸਮ",
+    "titleLabel": "ਸਿਰਲੇਖ (ਵਿਕਲਪਿਕ)",
+    "sourceUrl": "ਸਰੋਤ URL (ਵਿਕਲਪਿਕ)",
+    "textContent": "ਟੈਕਸਟ ਸਮੱਗਰੀ",
+    "fileLabel": "ਫਾਈਲ ਅਪਲੋਡ ਕਰੋ",
+    "selected": "ਚੁਣੀ ਹੋਈ",
+    "chars": "ਅੱਖਰ",
+    "result": "ਨਤੀਜਾ",
+    "yourActivity": "ਤੁਹਾਡੀ ਗਤੀਵਿਧੀ",
+    "metrics": "ਮੀਟ੍ਰਿਕਸ"
+  },
+  "news": {
+    "latest": "ਤਾਜ਼ਾ ਖਬਰਾਂ",
+    "seeMore": "ਹੋਰ ਵੇਖੋ",
+    "noResults": "ਦਿਖਾਉਣ ਲਈ ਕੋਈ ਖਬਰ ਨਹੀਂ",
+    "fake": "ਜਾਲੀ",
+    "real": "ਅਸਲ",
+    "unknown": "ਅਣਜਾਣ",
+    "detectNow": "ਹੁਣ ਹੀ ਪਤਾ ਲਗਾਓ"
+  },
+  "profile": {
+    "title": "ਤੁਹਾਡਾ ਪ੍ਰੋਫਾਈਲ",
+    "info": "ਪ੍ਰੋਫਾਈਲ ਜਾਣਕਾਰੀ",
+    "activity": "ਹਾਲੀਆ ਗਤੀਵਿਧੀ",
+    "stats": "ਡਿਟੈਕਸ਼ਨ ਅੰਕੜੇ"
+  },
+  "footer": {
+    "rights": "ਸਾਰੇ ਅਧਿਕਾਰ ਸੁੰਰੱਖਿਅਤ।"
+  }
+}

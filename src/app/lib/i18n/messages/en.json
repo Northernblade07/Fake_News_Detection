@@ -3,6 +3,7 @@
     "name": "SatyaShield"
   },
   "nav": {
+    "SatyaShield": "SatyaShield",
     "home": "Home",
     "explore": "Explore",
     "dashboard": "Dashboard",

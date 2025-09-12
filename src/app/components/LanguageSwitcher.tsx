@@ -1,10 +1,10 @@
-// components/LanguageSwitcher.tsx
 "use client";
 
 import { useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { setLocale } from "@/app/actions/set-locale";
+import { LOCALE_LABELS } from "@/app/lib/i18n/labels";
 
 const SUPPORTED = ["en","hi","bn","mr","te","ta","gu","ur","kn","or","ml","pa"] as const;
 type Locale = typeof SUPPORTED[number];
@@ -35,7 +35,7 @@ export default function LanguageSwitcher() {
       >
         {SUPPORTED.map((l) => (
           <option key={l} value={l}>
-            {l.toUpperCase()}
+            {LOCALE_LABELS[l]}
           </option>
         ))}
       </select>
