@@ -1,7 +1,13 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import BackgroundFX from "./components/BackgroundFX";
+import Navbar from "./components/Navbar";
+// app/layout.tsx (fixed imports)
+import { NextIntlClientProvider } from "next-intl";
+// next-intl (no URL prefix; locale comes from cookie via getRequestConfig)
+import { getMessages, getLocale } from "next-intl/server";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,9 +22,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: {
     default: "SatyaShield",
-    template: "%s | SatyaShield", // page title will auto-append brand
+    template: "%s | SatyaShield",
   },
-  description: "AI-Powered Fake News Detection Platform with advanced NLP and AI to identify misinformation in text, video, audio, and images.",
+  description:
+    "AI-Powered Fake News Detection Platform with advanced NLP and AI to identify misinformation in text, video, audio, and images.",
   keywords: [
     "fake news detection",
     "AI news checker",
@@ -30,15 +37,15 @@ export const metadata: Metadata = {
   authors: [{ name: "Your Name", url: "https://satyashield.com" }],
   creator: "SatyaShield Team",
   publisher: "SatyaShield",
-
   openGraph: {
     title: "SatyaShield - AI-Powered Fake News Detection",
-    description: "Combat misinformation with SatyaShield, an advanced AI-driven platform to detect fake news in multiple formats.",
+    description:
+      "Combat misinformation with SatyaShield, an advanced AI-driven platform to detect fake news in multiple formats.",
     url: "https://satyashield.com",
     siteName: "SatyaShield",
     images: [
       {
-        url: "/og-image.png", // add this in public/
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "SatyaShield Fake News Detection",
@@ -47,7 +54,6 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
   },
-
   twitter: {
     card: "summary_large_image",
     title: "SatyaShield - AI Fake News Detection",
@@ -55,37 +61,34 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],
     creator: "@yourTwitterHandle",
   },
-
   robots: {
     index: true,
     follow: true,
-  googleBot: {
-  index: true,
-  follow: true,
-  "max-video-preview": -1,
-  "max-image-preview": "large",
-  "max-snippet": -1,
-}
-,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
-
   alternates: {
     canonical: "https://satyashield.com",
   },
-
   category: "AI Fake News Detection",
 };
 
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
+  // Read resolved locale and messages for this request (from cookie-backed config)
+  const locale = await getLocale(); // e.g., "en", "hi", ... [3]
+  const messages = await getMessages(); // JSON loaded per the request config [3]
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body
-         className={[
+        className={[
           geistSans.variable,
           geistMono.variable,
           "antialiased min-h-dvh text-slate-100",
@@ -94,8 +97,11 @@ export default function RootLayout({
           "before:pointer-events-none before:fixed before:inset-0 before:bg-[radial-gradient(900px_400px_at_50%_-10%,rgba(255,255,255,0.05),transparent_60%)] before:opacity-70",
         ].join(" ")}
       >
-         <BackgroundFX />
-        {children}
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <Navbar />
+          <BackgroundFX />
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );

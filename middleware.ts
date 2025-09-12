@@ -1,7 +1,7 @@
 // middleware.ts (project root)
 import createIntlMiddleware from "next-intl/middleware";
 import { NextRequest } from "next/server";
-import { routing } from "@/lib/i18n/routing"; // define locales/defaultLocale
+import { routing } from "@/app/lib/i18n/routing"; // define locales/defaultLocale
 import { auth } from "./auth"; // v5 export from your root auth.ts
 
 // 1) next-intl middleware handles locale-based routing
