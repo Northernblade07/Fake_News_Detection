@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import User, { IUser } from "@/app/models/user";
 import { generateOTP, hashOTP, otpExpiryTimestamp } from "@/app/lib/otp";
 import { sendMail, otpEmailHtml } from "@/app/lib/mailer";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { connectToDatabase } from "@/app/lib/db";
 
 const PWD_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS ?? 12);

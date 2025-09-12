@@ -1,5 +1,5 @@
 // lib/otp.ts
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 // ===== Config =====
 const SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS ?? 12);

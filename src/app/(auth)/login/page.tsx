@@ -1,12 +1,13 @@
-// app/(auth)/login/page.tsx
 "use client";
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { signIn } from "next-auth/react";
 import { toast } from "react-toastify";
 import OAuthButtons from "@/app/components/OAuthButtons";
+import { cardBase, inputBase, labelHint, primaryBtn, linkAccent } from "@/app/components/Theme";
+import gsap from "gsap";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,24 +15,24 @@ export default function LoginPage() {
   const [email, setEmail] = useState(search.get("email") ?? "");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const cardRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!cardRef.current) return;
+    gsap.fromTo(
+      cardRef.current,
+      { y: 24, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }
+    );
+  }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const res = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-      if (!res) {
-        toast.error("Unexpected error");
-        return;
-      }
-      if (res.error) {
-        toast.error(res.error);
-        return;
-      }
+      const res = await signIn("credentials", { email, password, redirect: false });
+      if (!res) { toast.error("Unexpected error"); return; }
+      if (res.error) { toast.error(res.error); return; }
       toast.success("Signed in successfully");
       router.push("/");
     } finally {
@@ -40,16 +41,16 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="mx-auto max-w-md px-4 py-16">
-      <section className="rounded-2xl border border-brand-border bg-brand-card p-7 shadow-lg backdrop-blur">
-        <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
-        <p className="mt-1 text-sm text-slate-400">Sign in to continue with your account.</p>
+    <main className="mx-auto max-w-lg px-4 py-20">
+      <section ref={cardRef} className={cardBase}>
+        <h1 className="text-3xl font-extrabold tracking-tight">Welcome back</h1>
+        <p className="mt-2 text-sm text-slate-400">Sign in to continue with the platform.</p>
 
-        <form onSubmit={onSubmit} className="mt-5 grid gap-3">
+        <form onSubmit={onSubmit} className="mt-6 grid gap-4">
           <label className="grid gap-1">
-            <span className="text-xs text-slate-400">Email</span>
+            <span className={labelHint}>Email</span>
             <input
-              className="rounded-lg border border-brand-border bg-[#0f1524] px-3 py-2 text-slate-100 outline-none ring-0 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/40"
+              className={inputBase}
               type="email"
               required
               value={email}
@@ -59,9 +60,9 @@ export default function LoginPage() {
           </label>
 
           <label className="grid gap-1">
-            <span className="text-xs text-slate-400">Password</span>
+            <span className={labelHint}>Password</span>
             <input
-              className="rounded-lg border border-brand-border bg-[#0f1524] px-3 py-2 text-slate-100 outline-none ring-0 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/40"
+              className={inputBase}
               type="password"
               required
               minLength={8}
@@ -71,24 +72,20 @@ export default function LoginPage() {
             />
           </label>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-lg border-0 bg-gradient-to-r from-brand-blue to-brand-orange px-4 py-2 font-semibold text-black transition hover:brightness-105 disabled:opacity-60"
-          >
+          <button type="submit" disabled={submitting} className={primaryBtn}>
             {submitting ? "Signing in..." : "Sign in"}
           </button>
         </form>
 
-        <div className="mt-4">
+        <div className="mt-6">
           <OAuthButtons />
         </div>
 
-        <div className="mt-4 flex items-center justify-between text-sm">
-          <Link href="/(auth)/password/forgot" className="text-brand-blue hover:text-brand-orange">
+        <div className="mt-6 flex items-center justify-between text-sm">
+          <Link href="/(auth)/password/forgot" className={linkAccent}>
             Forgot password?
           </Link>
-          <Link href="/register" className="text-brand-blue hover:text-brand-orange">
+          <Link href="/register" className={linkAccent}>
             New user? Register
           </Link>
         </div>

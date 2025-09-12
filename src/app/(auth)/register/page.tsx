@@ -1,11 +1,12 @@
-// app/(auth)/register/page.tsx
 "use client";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import OAuthButtons from "@/app/components/OAuthButtons";
+import { cardBase, inputBase, labelHint, primaryBtn, linkAccent } from "@/app/components/Theme";
+import gsap from "gsap";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -13,6 +14,16 @@ export default function RegisterPage() {
   const [email, setEmail]   = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const cardRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!cardRef.current) return;
+    gsap.fromTo(
+      cardRef.current,
+      { y: 24, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }
+    );
+  }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -24,10 +35,7 @@ export default function RegisterPage() {
         body: JSON.stringify({ username, email: email.toLowerCase().trim(), password }),
       });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        toast.error(json?.error ?? "Registration failed");
-        return;
-      }
+      if (!res.ok) { toast.error(json?.error ?? "Registration failed"); return; }
       toast.success("OTP sent to your email");
       setTimeout(() => router.push(`/login?email=${encodeURIComponent(email)}`), 900);
     } finally {
@@ -36,16 +44,16 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="mx-auto max-w-md px-4 py-16">
-      <section className="rounded-2xl border border-brand-border bg-brand-card p-7 shadow-lg backdrop-blur">
-        <h1 className="text-2xl font-bold tracking-tight">Create your account</h1>
-        <p className="mt-1 text-sm text-slate-400">Join with email or continue with a provider.</p>
+    <main className="mx-auto max-w-lg px-4 py-20">
+      <section ref={cardRef} className={cardBase}>
+        <h1 className="text-3xl font-extrabold tracking-tight">Create your account</h1>
+        <p className="mt-2 text-sm text-slate-400">Join with email or continue with a provider.</p>
 
-        <form onSubmit={onSubmit} className="mt-5 grid gap-3">
+        <form onSubmit={onSubmit} className="mt-6 grid gap-4">
           <label className="grid gap-1">
-            <span className="text-xs text-slate-400">Username</span>
+            <span className={labelHint}>Username</span>
             <input
-              className="rounded-lg border border-brand-border bg-[#0f1524] px-3 py-2 text-slate-100 outline-none ring-0 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/40"
+              className={inputBase}
               type="text"
               required
               minLength={3}
@@ -58,9 +66,9 @@ export default function RegisterPage() {
           </label>
 
           <label className="grid gap-1">
-            <span className="text-xs text-slate-400">Email</span>
+            <span className={labelHint}>Email</span>
             <input
-              className="rounded-lg border border-brand-border bg-[#0f1524] px-3 py-2 text-slate-100 outline-none ring-0 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/40"
+              className={inputBase}
               type="email"
               required
               value={email}
@@ -70,9 +78,9 @@ export default function RegisterPage() {
           </label>
 
           <label className="grid gap-1">
-            <span className="text-xs text-slate-400">Password</span>
+            <span className={labelHint}>Password</span>
             <input
-              className="rounded-lg border border-brand-border bg-[#0f1524] px-3 py-2 text-slate-100 outline-none ring-0 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/40"
+              className={inputBase}
               type="password"
               required
               minLength={8}
@@ -82,21 +90,17 @@ export default function RegisterPage() {
             />
           </label>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-lg border-0 bg-gradient-to-r from-brand-blue to-brand-orange px-4 py-2 font-semibold text-black transition hover:brightness-105 disabled:opacity-60"
-          >
+          <button type="submit" disabled={submitting} className={primaryBtn}>
             {submitting ? "Creating account..." : "Create account"}
           </button>
         </form>
 
-        <div className="mt-4">
+        <div className="mt-6">
           <OAuthButtons />
         </div>
 
-        <div className="mt-4 text-right text-sm">
-          <Link href="/login" className="text-brand-blue hover:text-brand-orange">
+        <div className="mt-6 text-right text-sm">
+          <Link href="/login" className={linkAccent}>
             Already have an account? Login
           </Link>
         </div>

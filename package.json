@@ -2,31 +2,41 @@
   "name": "final_year_fake_news_detection",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
-    "start": "next start",
-    "lint": "eslint"
-  },
+ "scripts": {
+  "dev": "next dev --turbopack",  
+  "build": "next build",        
+  "start": "next start",          
+  "lint": "next lint",
+  "type-check": "tsc --noEmit"
+}
+,
   "dependencies": {
     "@auth/mongodb-adapter": "^3.10.0",
+    "@google/generative-ai": "^0.24.1",
+    "@huggingface/transformers": "^3.7.2",
     "@typescript-eslint/eslint-plugin": "^8.43.0",
     "@typescript-eslint/parser": "^8.43.0",
     "@typescript-eslint/utils": "^8.43.0",
-    "bcrypt": "^5.1.1",
+    "@xenova/transformers": "^2.17.2",
+    "bcryptjs": "^3.0.2",
     "chalk": "^5.6.2",
     "cloudinary": "^2.7.0",
     "dotenv": "^16.4.5",
+    "form-data": "^4.0.4",
+    "gsap": "^3.13.0",
     "lucide-react": "^0.542.0",
     "mongodb": "^6.19.0",
     "mongoose": "^8.18.1",
     "next": "^15.5.2",
     "next-auth": "^5.0.0-beta.29",
+    "next-intl": "^4.3.8",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-icons": "^5.5.0",
     "react-toastify": "^11.0.5",
     "resend": "^3.2.0",
-    "sharp": "^0.34.3"
+    "sharp": "^0.34.3",
+    "tesseract.js": "^6.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -37,6 +47,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9.35.0",
     "eslint-config-next": "15.5.2",
+    "ignore-loader": "^0.1.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

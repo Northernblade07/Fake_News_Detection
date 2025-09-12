@@ -1,6 +1,7 @@
 // app/(auth)/forgot-password/page.tsx
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -8,6 +9,7 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  const router = useRouter();
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
@@ -18,6 +20,7 @@ export default function ForgotPasswordPage() {
         body: JSON.stringify({ email: email.toLowerCase().trim() }),
       });
       toast.success("If the account exists, an email has been sent");
+      router.push("/reset-password")
     } finally {
       setSubmitting(false);
     }

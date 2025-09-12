@@ -3,7 +3,7 @@ export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
 import {connectToDatabase } from "@/app/lib/db";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 const PWD_SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS ?? 12);
 

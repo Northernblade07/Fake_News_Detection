@@ -7,10 +7,14 @@ function requireEnv(name: string): string {
   return v;
 }
 
+const CLOUD_NAME = requireEnv("CLOUDINARY_CLOUD_NAME");
+const API_KEY = requireEnv("CLOUDINARY_API_KEY");
+const API_SECRET = requireEnv("CLOUDINARY_API_SECRET");
+
 cloudinary.config({
-  cloud_name: requireEnv("CLOUDINARY_CLOUD_NAME"),
-  api_key: requireEnv("CLOUDINARY_API_KEY"),
-  api_secret: requireEnv("CLOUDINARY_API_SECRET"),
+  cloud_name: CLOUD_NAME,
+  api_key: API_KEY,
+  api_secret: API_SECRET,
   secure: true,
 });
 
@@ -27,22 +31,16 @@ export type CloudinaryUploadResult = {
 
 export type UploadOpts = {
   folder?: string;
-  resource_type?: "image" | "video" | "raw" | "auto";
+  resource_type?: "image" | "video" | "raw" | "auto"; // allow auto on upload
   public_id?: string;
 };
 
-/**
- * Ensure Cloudinary resource_type is normalized
- */
-export function narrowResourceType(rt: string): "image" | "video" | "raw" {
+export function normalizeResourceType(rt: string): "image" | "video" | "raw" {
   if (rt === "image" || rt === "video" || rt === "raw") return rt;
-  // fallback → Cloudinary sometimes sends "auto"
+  // If Cloudinary gives something weird, fallback to raw
   return "raw";
 }
 
-/**
- * Upload a buffer to Cloudinary
- */
 export function uploadBufferToCloudinary(
   buffer: Buffer,
   opts: UploadOpts = {}
@@ -53,20 +51,19 @@ export function uploadBufferToCloudinary(
     const stream = cloudinary.uploader.upload_stream(
       { folder, resource_type, public_id },
       (error, result) => {
-        if (error || !result) {
-          return reject(error ?? new Error("Unknown Cloudinary error"));
-        }
+        if (error || !result) return reject(error);
         try {
-          resolve({
+          const out: CloudinaryUploadResult = {
             secure_url: result.secure_url,
             public_id: result.public_id,
-            resource_type: narrowResourceType(result.resource_type),
+            resource_type: normalizeResourceType(result.resource_type),
             format: result.format,
             bytes: result.bytes,
             width: result.width,
             height: result.height,
             duration: result.duration,
-          });
+          };
+          resolve(out);
         } catch (e) {
           reject(e);
         }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import BackgroundFX from "./components/BackgroundFX";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -84,8 +85,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-900`}
+         className={[
+          geistSans.variable,
+          geistMono.variable,
+          "antialiased min-h-dvh text-slate-100",
+          // Metallic dark gradient stack + vignette + subtle texture
+          "bg-[radial-gradient(1200px_800px_at_85%_-15%,rgba(96,165,250,0.12),transparent_55%),radial-gradient(1000px_700px_at_-10%_110%,rgba(251,146,60,0.10),transparent_55%),linear-gradient(180deg,#0b0f1a_0%,#0b0f1a_30%,#0a0e19_100%)]",
+          "before:pointer-events-none before:fixed before:inset-0 before:bg-[radial-gradient(900px_400px_at_50%_-10%,rgba(255,255,255,0.05),transparent_60%)] before:opacity-70",
+        ].join(" ")}
       >
+         <BackgroundFX />
         {children}
       </body>
     </html>

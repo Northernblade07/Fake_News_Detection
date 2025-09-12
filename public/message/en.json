@@ -1,0 +1,73 @@
+{
+  "app": {
+    "name": "SatyaShield"
+  },
+  "nav": {
+    "home": "Home",
+    "explore": "Explore",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "language": "Language"
+  },
+  "common": {
+    "detect": "Detect",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "upload": "Upload",
+    "or": "or",
+    "loading": "Loading…",
+    "success": "Success",
+    "error": "Something went wrong",
+    "copied": "Copied",
+    "unknown": "Unknown"
+  },
+  "auth": {
+    "welcomeBack": "Welcome back",
+    "createAccount": "Create your account",
+    "email": "Email",
+    "password": "Password",
+    "username": "Username",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "signUp": "Create account",
+    "signingUp": "Creating account…",
+    "forgotPassword": "Forgot password?",
+    "haveAccount": "Already have an account? Login",
+    "newHere": "New user? Register"
+  },
+  "dashboard": {
+    "title": "Detect News",
+    "subtitle": "Submit text or upload media to analyze with AI.",
+    "inputType": "Input type",
+    "titleLabel": "Title (optional)",
+    "sourceUrl": "Source URL (optional)",
+    "textContent": "Text content",
+    "fileLabel": "Upload file",
+    "selected": "Selected",
+    "chars": "chars",
+    "result": "Result",
+    "yourActivity": "Your activity",
+    "metrics": "Metrics"
+  },
+  "news": {
+    "latest": "Latest news",
+    "seeMore": "See more",
+    "noResults": "No news to show",
+    "fake": "Fake",
+    "real": "Real",
+    "unknown": "Unknown",
+    "detectNow": "Detect now"
+  },
+  "profile": {
+    "title": "Your profile",
+    "info": "Profile info",
+    "activity": "Recent activity",
+    "stats": "Detection stats"
+  },
+  "footer": {
+    "rights": "All rights reserved."
+  }
+}

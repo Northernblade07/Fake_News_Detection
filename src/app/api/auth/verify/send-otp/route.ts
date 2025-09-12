@@ -4,7 +4,7 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import { connectToDatabase} from "@/app/lib/db";
 import { Resend } from "resend";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY!;
 const MAIL_FROM = process.env.MAIL_FROM!; // e.g. "YourApp <no-reply@yourdomain.com>"
