@@ -1,8 +1,9 @@
 // app/components/DetectionForm.tsx
 "use client";
 
+import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 type DetectType = "text" | "file";
 
@@ -29,7 +30,7 @@ export default function DetectionForm() {
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
     if (!cardRef.current || !headlineRef.current || !subRef.current) return;
 
     const tl = gsap.timeline({ defaults: { duration: 0.5, ease: "power2.out" } });

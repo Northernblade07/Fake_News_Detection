@@ -8,16 +8,13 @@ import { connectToDatabase } from "@/app/lib/db";
 import NewsDetection, { INewsMedia } from "@/app/models/News";
 import DetectionLog from "@/app/models/detectionlog";
 import { uploadBufferToCloudinary, normalizeResourceType } from "@/app/lib/cloudinary";
-import {
-  validateType,
-  validateText,
-  validateOptionalUrl,
-  readAndValidateFile,
-} from "@/app/lib/validation";
+import { validateType, validateText, validateOptionalUrl, readAndValidateFile } from "@/app/lib/validation";
+import { translateText, type LangISO } from "@/app/lib/ai/translate";
+import { ocrImageBuffer } from "@/app/lib/ai/ocr";
 
 type Classification = { label: "fake" | "real" | "unknown"; probability: number };
 
-// Placeholder AI classification, replace later with HuggingFace / Gemini / LangChain
+// Placeholder AI classification – replace with HuggingFace / Gemini later
 async function classifyPlaceholder(_text?: string): Promise<Classification> {
   return { label: "unknown", probability: 0 };
 }
@@ -27,6 +24,10 @@ function toObjectId(id: string): mongoose.Types.ObjectId {
   if (!mongoose.isValidObjectId(id)) throw new Error("Invalid user id");
   return new mongoose.Types.ObjectId(id);
 }
+
+const SUPPORTED_LANGS: ReadonlyArray<LangISO> = [
+  "en","hi","bn","mr","te","ta","gu","ur","kn","or","ml","pa"
+];
 
 export async function POST(req: Request) {
   try {
@@ -48,7 +49,6 @@ export async function POST(req: Request) {
     if (type === "text") {
       textContent = validateText(form.get("text")?.toString() ?? null);
     } else {
-      // Handle multiple files
       const files = form.getAll("file");
       if (!files.length) {
         return NextResponse.json({ error: "At least one file is required" }, { status: 400 });
@@ -56,17 +56,27 @@ export async function POST(req: Request) {
 
       for (const f of files) {
         if (!(f instanceof File)) continue;
-
-        // Validate file size (5MB max)
         if (f.size > 5 * 1024 * 1024) {
           return NextResponse.json({ error: `File too large: ${f.name}` }, { status: 400 });
         }
 
         const { buffer } = await readAndValidateFile(f);
 
+        // OCR if image or pdf
+        if (f.type.startsWith("image/") || f.type === "application/pdf") {
+          try {
+            const extractedText = await ocrImageBuffer(buffer);
+            if (extractedText) {
+              textContent = (textContent ?? "") + "\n" + extractedText;
+            }
+          } catch (e) {
+            console.warn(`OCR failed for ${f.name}:`, e);
+          }
+        }
+
         const uploaded = await uploadBufferToCloudinary(buffer, {
           folder: "satyashield/uploads",
-          resource_type: "auto", // cloudinary.ts handles auto
+          resource_type: "auto",
         });
 
         media.push({
@@ -82,21 +92,37 @@ export async function POST(req: Request) {
       }
     }
 
-    const aiResult = await classifyPlaceholder(textContent);
-    const userId = toObjectId(String(session.user.id));
+    // Normalize text for analysis
+    const rawLang = form.get("lang")?.toString() ?? "en";
+    const userLang: LangISO = (SUPPORTED_LANGS as readonly string[]).includes(rawLang)
+      ? (rawLang as LangISO)
+      : "en";
+    const analysisLang: LangISO = "en";
 
-    // Save news detection
+    let normalizedText = textContent;
+    if (textContent && userLang !== analysisLang) {
+      try {
+        normalizedText = await translateText(textContent, userLang, analysisLang);
+      } catch {
+        normalizedText = textContent; // fallback
+      }
+    }
+
+    // Classification (placeholder for now)
+    const aiResult = await classifyPlaceholder(normalizedText);
+
+    const userId = toObjectId(String(session.user.id));
     const newsDoc = await NewsDetection.create({
       type,
       title,
-      textContent,
+      textContent,    // original
+      normalizedText, // translated/cleaned for analysis
       media,
       source: { url: sourceUrl },
       result: aiResult,
       user: userId,
     });
 
-    // Save detection log
     const logDoc = await DetectionLog.create({
       user: userId,
       news: newsDoc._id,

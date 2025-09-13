@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import {useGSAP } from '@gsap/react'
 import gsap from "gsap";
 
 export default function BackgroundFX() {
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
     if (!ref.current) return;
     const el = ref.current;
     // Subtle shimmering sweep across the top for a metallic feel
