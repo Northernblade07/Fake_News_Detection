@@ -8,6 +8,7 @@ import Navbar from "./components/Navbar";
 import { NextIntlClientProvider } from "next-intl";
 // next-intl (no URL prefix; locale comes from cookie via getRequestConfig)
 import { getMessages, getLocale } from "next-intl/server";
+import Providers from "./provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -98,9 +99,11 @@ export default async function RootLayout({
         ].join(" ")}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
+         <Providers>
           <Navbar />
           <BackgroundFX />
           {children}
+         </Providers>
         </NextIntlClientProvider>
       </body>
     </html>
