@@ -12,58 +12,56 @@ export default function Hero() {
   const t = useTranslations("landing.hero");
   const scope = useRef<HTMLDivElement>(null);
 
-  useGSAP(
-    () => {
-      gsap.fromTo(
-        ".hero-title",
-        { y: 24, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out", stagger: 0.04 }
-      );
-      gsap.fromTo(
-        ".hero-sub",
-        { y: 16, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, ease: "power2.out", delay: 0.2 }
-      );
-      gsap.fromTo(
-        ".hero-cta",
-        { y: 12, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.45, ease: "power2.out", delay: 0.3, stagger: 0.08 }
-      );
-    },
-    { scope }
-  );
+  useGSAP(() => {
+    gsap.fromTo(
+      ".hero-title",
+      { y: 40, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", stagger: 0.04 }
+    );
+    gsap.fromTo(
+      ".hero-sub",
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.7, ease: "power2.out", delay: 0.2 }
+    );
+    gsap.fromTo(
+      ".hero-cta",
+      { y: 15, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.6, ease: "power2.out", delay: 0.3, stagger: 0.1 }
+    );
+  }, { scope });
 
   return (
     <section
       ref={scope}
-      className="relative rounded-3xl border border-white/10 bg-[#0e1424]/80 p-8 md:p-12 shadow-[0_10px_40px_rgba(0,0,0,0.45)] backdrop-blur"
+      className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0e1424]/90 px-6 py-16 md:py-24 text-center shadow-[0_10px_40px_rgba(0,0,0,0.6)] backdrop-blur"
     >
-      <div className="max-w-3xl">
-        <h1 className="hero-title text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
-          AI News Integrity for India
+      <div className="relative z-10 mx-auto max-w-4xl">
+        <h1 className="hero-title text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
+          {t("title")}
         </h1>
-        <p className="hero-sub mt-3 text-slate-300">
-          Multilingual fake‑news detection across text, images, audio, and video—built for trust and speed.
+        <p className="hero-sub mt-4 text-lg md:text-xl text-slate-300">
+          {t("subtitle")}
         </p>
-        <div className="mt-6 flex flex-wrap items-center gap-3">
+        <div className="mt-8 flex flex-wrap justify-center gap-4">
           <Link
             href="/dashboard"
-            className="hero-cta inline-flex items-center rounded-xl bg-gradient-to-r from-sky-400 via-sky-500 to-amber-400 px-5 py-2.5 font-semibold text-[#0b0f1a] shadow-[0_6px_30px_rgba(56,189,248,0.25)] hover:brightness-110 transition"
+            className="hero-cta inline-flex items-center rounded-xl bg-gradient-to-r from-green-400 via-sky-200 to-amber-800 px-6 py-3 font-semibold text-[#0b0f1a] shadow-[0_6px_30px_rgba(56,189,248,0.35)] hover:brightness-110 transition"
           >
-            Get started
+            {t("ctaPrimary")}
           </Link>
           <Link
             href="/explore"
-            className="hero-cta inline-flex items-center rounded-xl border border-white/10 bg-[#0f1524] px-5 py-2.5 text-slate-100 hover:border-sky-400/30 hover:bg-[#111a2f] transition"
+            className="hero-cta inline-flex items-center rounded-xl border border-white/10 bg-[#0f1524] px-6 py-3 text-slate-100 hover:border-sky-400/30 hover:bg-[#111a2f] transition"
           >
-            Explore latest news
+            {t("ctaSecondary")}
           </Link>
         </div>
       </div>
 
+      {/* Floating gradient accents */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-10 -top-10 h-28 w-44 rounded-2xl bg-gradient-to-r from-sky-400/20 via-white/10 to-amber-400/20 blur-2xl"
+        className="absolute top-0 left-1/2 h-80 w-80 -translate-x-1/2 bg-gradient-to-r from-sky-400/20 via-white/10 to-amber-400/20 blur-3xl rounded-full animate-pulse-slow"
       />
     </section>
   );

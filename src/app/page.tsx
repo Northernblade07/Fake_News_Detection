@@ -3,17 +3,35 @@ import Hero from "./components/landing/Hero";
 import Features from "./components/landing/Features";
 import StatsStrip from "./components/landing/StatsStrip";
 import LatestNews from "./components/landing/LatestNews";
-import CtaBand from "./components/landing/CtaBand";
+import CtaBand from "./components/landing/CtaBands";
 
-export default async function HomePage() {
-  // If you later want SSR news, fetch here and pass as props to LatestNews
+export default function HomePage() {
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-8 py-10 space-y-14">
-      <Hero />
-      <StatsStrip />
-      <Features />
-      <LatestNews />
-      <CtaBand />
-    </div>
+    <main className="flex flex-col items-center w-full bg-[#0b0f1a] text-white">
+      {/* Hero Section */}
+      <section className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-12 md:py-2">
+        <Hero />
+      </section>
+
+      {/* Stats Strip */}
+      <section className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-1">
+        <StatsStrip />
+      </section>
+
+      {/* Features Grid */}
+      <section className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-16">
+        <Features />
+      </section>
+
+      {/* Latest News */}
+      <section className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-16 ">
+        <LatestNews />
+      </section>
+
+      {/* Call-to-Action Band */}
+      <section className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-16">
+        <CtaBand />
+      </section>
+    </main>
   );
 }
