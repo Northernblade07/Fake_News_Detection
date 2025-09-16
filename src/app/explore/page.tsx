@@ -7,6 +7,7 @@ import { Search, SlidersHorizontal, Bookmark, Gauge, Loader2 } from "lucide-reac
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import ExternalImage from "@/app/components/ExternalImage";
+import { useTranslations, useLocale, useFormatter } from "next-intl";
 
 gsap.registerPlugin(useGSAP);
 
@@ -20,51 +21,66 @@ type Article = {
   description?: string | null;
 };
 
-const CATEGORIES = [
-  { key: "all", label: "All" },
-  { key: "business", label: "Business" },
-  { key: "technology", label: "Technology" },
-  { key: "entertainment", label: "Entertainment" },
-  { key: "sports", label: "Sports" },
-  { key: "science", label: "Science" },
-  { key: "health", label: "Health" },
-  { key: "politics", label: "Politics" },
-] as const;
+type ExploreResponse = {
+  articles: Article[];
+  trending: Article[];
+  nextCursor: string | null;
+  hasMore: boolean;
+};
 
-const SORTS = [
-  { key: "publishedAt", label: "Newest" },
-  { key: "relevancy", label: "Relevancy" },
-  { key: "popularity", label: "Popularity" },
+// Keys stay stable for API/filtering; labels come from i18n
+const CATEGORIES = [
+  "all",
+  "business",
+  "technology",
+  "entertainment",
+  "sports",
+  "science",
+  "health",
+  "politics",
 ] as const;
+type CategoryKey = (typeof CATEGORIES)[number];
+
+const SORTS = ["publishedAt", "relevancy", "popularity"] as const;
+type SortKey = (typeof SORTS)[number];
 
 const PAGE_SIZE = 12;
 
 export default function ExplorePage() {
+  const t = useTranslations("explore");
+  const tc = useTranslations("common");
+  const locale = useLocale();
+  const f = useFormatter();
+
   const [q, setQ] = useState("");
   const [debouncedQ, setDebouncedQ] = useState("");
-  const [category, setCategory] = useState<(typeof CATEGORIES)[number]["key"]>("all");
-  const [sortBy, setSortBy] = useState<(typeof SORTS)[number]["key"]>("publishedAt");
-  const [page, setPage] = useState(1);
+  const [category, setCategory] = useState<CategoryKey>("all");
+  const [sortBy, setSortBy] = useState<SortKey>("publishedAt");
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [items, setItems] = useState<Article[]>([]);
   const [trending, setTrending] = useState<Article[]>([]);
   const [err, setErr] = useState<string | null>(null);
+  const [cursor, setCursor] = useState<string | null>(null);
 
   const listScope = useRef<HTMLDivElement>(null);
   const trendScope = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Debounce search
   useEffect(() => {
-    const t = setTimeout(() => setDebouncedQ(q), 400);
-    return () => clearTimeout(t);
+    const tmr = setTimeout(() => setDebouncedQ(q), 400);
+    return () => clearTimeout(tmr);
   }, [q]);
 
-  const queryKey = useMemo(() => JSON.stringify({ q: debouncedQ.trim(), category, sortBy }), [debouncedQ, category, sortBy]);
+  const queryKey = useMemo(
+    () => JSON.stringify({ q: debouncedQ.trim(), category, sortBy, locale }),
+    [debouncedQ, category, sortBy, locale]
+  );
 
-  // GSAP animation for news list
+  // GSAP animations
   useGSAP(
     () => {
       if (!listScope.current) return;
@@ -77,7 +93,6 @@ export default function ExplorePage() {
     { scope: listScope, dependencies: [items.length], revertOnUpdate: true }
   );
 
-  // GSAP animation for trending
   useGSAP(
     () => {
       if (!trendScope.current) return;
@@ -90,55 +105,65 @@ export default function ExplorePage() {
     { scope: trendScope, dependencies: [trending.length], revertOnUpdate: true }
   );
 
-  // Loader function
   const load = useCallback(
     async (mode: "replace" | "append") => {
-      const targetPage = mode === "replace" ? 1 : page + 1;
-      const isFirst = mode === "replace";
-
       try {
-        isFirst ? setLoading(true) : setLoadingMore(true);
+        mode === "replace" ? setLoading(true) : setLoadingMore(true);
         setErr(null);
+
+        // Cancel in-flight to avoid races
+        abortRef.current?.abort();
+        const controller = new AbortController();
+        abortRef.current = controller;
 
         const params = new URLSearchParams();
         if (debouncedQ.trim()) params.set("q", debouncedQ.trim());
         if (category !== "all") params.set("category", category);
         if (sortBy) params.set("sortBy", sortBy);
-        params.set("page", String(targetPage));
         params.set("pageSize", String(PAGE_SIZE));
+        params.set("lang", locale);
+        if (mode === "append" && cursor) params.set("cursor", cursor);
 
-        const res = await fetch(`/api/news/explore?${params.toString()}`, { cache: "no-store" });
-        const json = await res.json();
-        if (!res.ok) throw new Error(json?.error || "Failed to load news");
+        const res = await fetch(`/api/news/explore?${params.toString()}`, {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        const json: ExploreResponse =
+          (await res.json()) as ExploreResponse & { error?: string };
+        if (!res.ok) throw new Error("Failed to load news");
 
-        const incoming: Article[] = json.articles ?? [];
+        const incoming = json.articles ?? [];
         setTrending(json.trending ?? []);
 
-        if (isFirst) {
+        if (mode === "replace") {
           setItems(incoming);
-          setPage(1);
+          setCursor(json.nextCursor ?? null);
         } else {
           setItems((prev) => {
-            const combined = [...prev, ...incoming];
-            const seen = new Set<string>();
-            return combined.filter((a) => (a.id && !seen.has(a.id) && seen.add(a.id)));
+            const seen = new Set(prev.map((p) => p.id));
+            const newOnes = incoming.filter((a) => a.id && !seen.has(a.id));
+            return [...prev, ...newOnes];
           });
-          setPage(targetPage);
+          setCursor(json.nextCursor ?? null);
         }
 
-        setHasMore(incoming.length >= PAGE_SIZE);
+        setHasMore(Boolean(json.hasMore));
       } catch (e) {
+        if ((e as Error).name === "AbortError") return;
         setErr(e instanceof Error ? e.message : "Failed to load news");
       } finally {
-        isFirst ? setLoading(false) : setLoadingMore(false);
+        mode === "replace" ? setLoading(false) : setLoadingMore(false);
       }
     },
-    [debouncedQ, category, sortBy, page]
+    [debouncedQ, category, sortBy, cursor, locale]
   );
 
+  // Reset on query change
   useEffect(() => {
     setHasMore(true);
+    setCursor(null);
     load("replace");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [load, queryKey]);
 
   // Infinite scroll
@@ -147,10 +172,17 @@ export default function ExplorePage() {
     const el = sentinelRef.current;
     const obs = new IntersectionObserver(
       (entries) => {
-        const entry = entries[0];
-        if (entry.isIntersecting && !loading && !loadingMore && hasMore && !err) {
-          load("append");
-        }
+        entries.forEach((entry) => {
+          if (
+            entry.isIntersecting &&
+            !loading &&
+            !loadingMore &&
+            hasMore &&
+            !err
+          ) {
+            load("append");
+          }
+        });
       },
       { root: null, rootMargin: "600px 0px 600px 0px", threshold: 0.01 }
     );
@@ -164,39 +196,47 @@ export default function ExplorePage() {
     "inline-flex items-center rounded-md border border-white/10 bg-[#0f1524] px-3 py-1.5 text-xs text-slate-200 hover:border-sky-400/30 hover:bg-[#111a2f] transition";
 
   return (
-    <div className="mx-auto grid max-w-[1280px] grid-cols-12 gap-5 px-5 py-7">
+    <div className="mx-auto grid max-w-[1480px] grid-cols-12 gap-5 px-5 py-7">
       {/* Left Sidebar */}
       <aside className="col-span-12 lg:col-span-3 space-y-5">
         <section className={sidebarCard}>
-          <h2 className="text-sm font-semibold tracking-wide text-slate-200">Categories</h2>
+          <h2 className="text-sm font-semibold tracking-wide text-slate-200">
+            {t("sidebar.categories")}
+          </h2>
           <div className="mt-3 flex flex-wrap gap-2">
-            {CATEGORIES.map((c) => (
+            {CATEGORIES.map((key) => (
               <button
-                key={c.key}
-                onClick={() => setCategory(c.key)}
-                className={`${chip} ${category === c.key ? "ring-2 ring-sky-400/30" : ""}`}
+                key={key}
+                onClick={() => setCategory(key)}
+                className={`${chip} ${
+                  category === key ? "ring-2 ring-sky-400/30" : ""
+                }`}
               >
-                {c.label}
+                {t(`categories.${key}`)}
               </button>
             ))}
           </div>
         </section>
 
         <section className={sidebarCard + " flex items-center justify-between"}>
-          <div className="text-sm text-slate-300">Go to dashboard</div>
+          <div className="text-sm text-slate-300">{t("sidebar.dashboardCta")}</div>
           <Link
             href="/dashboard"
             className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-sky-400 via-sky-500 to-amber-400 px-3 py-1.5 text-sm font-semibold text-[#0b0f1a] hover:brightness-110 transition"
           >
-            <Gauge className="h-4 w-4" /> Open
+            <Gauge className="h-4 w-4" /> {t("buttons.open")}
           </Link>
         </section>
 
         <section className={sidebarCard + " hidden lg:block"}>
-          <div className="text-sm font-semibold text-slate-200">Bookmarks</div>
-          <p className="mt-1 text-xs text-slate-400">Sign in to view saved items.</p>
+          <div className="text-sm font-semibold text-slate-200">
+            {t("sidebar.bookmarks.title")}
+          </div>
+          <p className="mt-1 text-xs text-slate-400">
+            {t("sidebar.bookmarks.signIn")}
+          </p>
           <div className="mt-3 inline-flex items-center gap-2 text-slate-300 text-sm">
-            <Bookmark className="h-4 w-4 text-sky-300" /> Coming soon
+            <Bookmark className="h-4 w-4 text-sky-300" /> {t("sidebar.bookmarks.soon")}
           </div>
         </section>
       </aside>
@@ -209,8 +249,8 @@ export default function ExplorePage() {
             <div className="relative flex-1">
               <input
                 value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="Search news..."
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQ(e.target.value)}
+                placeholder={t("controls.searchPlaceholder")}
                 className="w-full rounded-lg border border-white/10 bg-[#0f1524] px-9 py-2.5 text-slate-100 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/30"
               />
               <Search className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -218,21 +258,23 @@ export default function ExplorePage() {
             <div className="flex items-center gap-2 mt-2 md:mt-0">
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setSortBy(e.target.value as SortKey)
+                }
                 className="rounded-lg border border-white/10 bg-[#0f1524] px-3 py-2.5 text-slate-100"
               >
-                {SORTS.map((s) => (
-                  <option key={s.key} value={s.key}>
-                    {s.label}
+                {SORTS.map((key) => (
+                  <option key={key} value={key}>
+                    {t(`sorts.${key}`)}
                   </option>
                 ))}
               </select>
               <button
                 onClick={() => load("replace")}
                 className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-[#0f1524] px-3 py-2.5 text-sm text-slate-100 hover:border-sky-400/30 hover:bg-[#111a2f] transition"
-                title="Apply filters"
+                title={t("controls.apply")}
               >
-                <SlidersHorizontal className="h-4 w-4 text-sky-300" /> Apply
+                <SlidersHorizontal className="h-4 w-4 text-sky-300" /> {t("controls.apply")}
               </button>
             </div>
           </div>
@@ -240,11 +282,13 @@ export default function ExplorePage() {
 
         {/* News List */}
         <div ref={listScope} className="mt-5 space-y-4">
-          {/* Loading, Error, No Results remain unchanged */}
           {loading && (
             <div className="grid gap-4">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="rounded-2xl border border-white/10 bg-[#0f1524] p-4 animate-pulse">
+                <div
+                  key={i}
+                  className="rounded-2xl border border-white/10 bg-[#0f1524] p-4 animate-pulse"
+                >
                   <div className="flex gap-4">
                     <div className="h-28 w-44 rounded-lg bg-white/5" />
                     <div className="flex-1 space-y-3">
@@ -258,15 +302,16 @@ export default function ExplorePage() {
             </div>
           )}
           {!loading && err && (
-            <div className="rounded-2xl border border-white/10 bg-[#0f1524] p-4 text-sm text-rose-300">{err}</div>
+            <div className="rounded-2xl border border-white/10 bg-[#0f1524] p-4 text-sm text-rose-300">
+              {err}
+            </div>
           )}
           {!loading && items.length === 0 && !err && (
             <div className="rounded-2xl border border-white/10 bg-[#0f1524] p-4 text-sm text-slate-400 text-center">
-              No news found
+              {t("states.noResults")}
             </div>
           )}
 
-          {/* Articles */}
           {!loading &&
             items.map((a) => (
               <article
@@ -275,24 +320,43 @@ export default function ExplorePage() {
               >
                 <div className="flex flex-col sm:flex-row gap-4">
                   <div className="relative h-28 w-full sm:w-44 overflow-hidden rounded-lg bg-white/5">
-                    <ExternalImage src={a.urlToImage} alt={a.title} className="h-full w-full rounded-lg" />
+                    <ExternalImage
+                      src={a.urlToImage}
+                      alt={a.title}
+                      className="h-full w-full rounded-lg"
+                    />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold leading-snug">{a.title}</h3>
                     <div className="mt-1 text-xs text-slate-400">
-                      {a.source || "Unknown source"}{" "}
-                      {a.publishedAt ? `• ${new Date(a.publishedAt).toLocaleString()}` : ""}
+                      {a.source || t("article.unknownSource")}{" "}
+                      {a.publishedAt
+                        ? `• ${f.dateTime(new Date(a.publishedAt), {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                          })}`
+                        : ""}
                     </div>
-                    <p className="mt-2 line-clamp-2 text-sm text-slate-300">{a.description ?? ""}</p>
+                    <p className="mt-2 line-clamp-2 text-sm text-slate-300">
+                      {a.description ?? ""}
+                    </p>
                     <div className="mt-3 flex flex-wrap gap-3">
-                      <a href={a.url} target="_blank" rel="noreferrer" className="text-sky-300 text-sm hover:text-amber-300">
-                        Read
+                      <a
+                        href={a.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-sky-300 text-sm hover:text-amber-300"
+                      >
+                        {t("article.read")}
                       </a>
                       <Link
-                        href={{ pathname: "/dashboard", query: { sourceUrl: a.url, title: a.title } }}
+                        href={{
+                          pathname: "/dashboard",
+                          query: { sourceUrl: a.url, title: a.title },
+                        }}
                         className="text-sm text-slate-200 underline-offset-2 hover:underline"
                       >
-                        Analyze
+                        {t("article.analyze")}
                       </Link>
                     </div>
                   </div>
@@ -304,11 +368,13 @@ export default function ExplorePage() {
           <div ref={sentinelRef} className="h-8 w-full" />
           {loadingMore && (
             <div className="flex items-center justify-center gap-2 py-3 text-xs text-slate-400">
-              <Loader2 className="h-4 w-4 animate-spin" /> Loading more...
+              <Loader2 className="h-4 w-4 animate-spin" /> {t("states.loadingMore")}
             </div>
           )}
           {!hasMore && !loading && items.length > 0 && (
-            <div className="py-3 text-center text-xs text-slate-500">No more results</div>
+            <div className="py-3 text-center text-xs text-slate-500">
+              {t("states.noMore")}
+            </div>
           )}
         </div>
       </main>
@@ -316,23 +382,27 @@ export default function ExplorePage() {
       {/* Right Sidebar */}
       <aside className="col-span-12 lg:col-span-3 space-y-5">
         <section className={sidebarCard}>
-          <h2 className="text-sm font-semibold tracking-wide text-slate-200">Trending today</h2>
+          <h2 className="text-sm font-semibold tracking-wide text-slate-200">
+            {t("trending.title")}
+          </h2>
           <div ref={trendScope} className="mt-3 grid gap-2">
-            {trending.map((t) => (
+            {trending.map((tItem) => (
               <a
-                key={t.id}
-                href={t.url}
+                key={tItem.id}
+                href={tItem.url}
                 target="_blank"
                 rel="noreferrer"
                 className="trend-item rounded-xl border border-white/10 bg-[#0f1524] p-3 hover:border-sky-400/30 hover:bg-[#111a2f] transition"
               >
-                <div className="line-clamp-2 text-sm">{t.title}</div>
-                <div className="mt-1 text-[11px] text-slate-500">{t.source || "Unknown"}</div>
+                <div className="line-clamp-2 text-sm">{tItem.title}</div>
+                <div className="mt-1 text-[11px] text-slate-500">
+                  {tItem.source || tc("unknown")}
+                </div>
               </a>
             ))}
             {trending.length === 0 && (
               <div className="rounded-xl border border-white/10 bg-[#0f1524] p-3 text-xs text-slate-400 text-center">
-                No trending items
+                {t("trending.none")}
               </div>
             )}
           </div>

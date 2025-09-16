@@ -123,5 +123,55 @@
       "primary": "શરૂ કરો",
       "secondary": "મફતમાં અજમાવો"
     }
+  },
+
+  "explore": {
+    "sidebar": {
+      "categories": "શ્રેણીઓ",
+      "dashboardCta": "ડેશબોર્ડ પર જાઓ",
+      "bookmarks": {
+        "title": "બુકમાર્ક્સ",
+        "signIn": "સાચવેલ આઇટમ જોવા માટે સાઇન ઇન કરો.",
+        "soon": "જલ્દી જ આવી રહ્યું છે"
+      }
+    },
+    "controls": {
+      "searchPlaceholder": "સમાચાર શોધો...",
+      "apply": "લાગુ કરો"
+    },
+    "buttons": {
+      "open": "ખોલો"
+    },
+    "categories": {
+      "all": "બધું",
+      "business": "વ્યવસાય",
+      "technology": "ટેક્નોલોજી",
+      "entertainment": "મનોરંજન",
+      "sports": "ક્રીડા",
+      "science": "વિજ્ઞાન",
+      "health": "આરોગ્ય",
+      "politics": "રાજકારણ"
+    },
+    "sorts": {
+      "publishedAt": "નવીનતમ",
+      "relevancy": "પ્રાસંગિકતા",
+      "popularity": "લોકપ્રિયતા"
+    },
+    "article": {
+      "read": "વાંચો",
+      "analyze": "વિશ્લેષણ કરો",
+      "unknownSource": "અજ્ઞાત સ્ત્રોત"
+    },
+    "trending": {
+      "title": "આજે ટ્રેન્ડિંગ",
+      "none": "કોઈ ટ્રેન્ડિંગ આઇટમ નથી"
+    },
+    "states": {
+      "noResults": "કોઈ સમાચાર મળ્યા નથી",
+      "loadingMore": "વધુ લોડ થઈ રહ્યું છે...",
+      "noMore": "વધુ પરિણામ નથી"
+    }
   }
+
+
 }

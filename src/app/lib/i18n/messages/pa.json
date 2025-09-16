@@ -123,5 +123,55 @@
       "primary": "ਸ਼ੁਰੂ ਕਰੋ",
       "secondary": "ਮੁਫ਼ਤ ਅਜ਼ਮਾਓ"
     }
+  },
+  
+  "explore": {
+    "sidebar": {
+      "categories": "ਸ਼੍ਰੇਣੀਆਂ",
+      "dashboardCta": "ਡੈਸ਼ਬੋਰਡ ਤੇ ਜਾਓ",
+      "bookmarks": {
+        "title": "ਬੁੱਕਮਾਰਕਸ",
+        "signIn": "ਸੰਭਾਲੇ ਆਈਟਮ ਵੇਖਣ ਲਈ ਸਾਈਨ ਇਨ ਕਰੋ।",
+        "soon": "ਜਲਦੀ ਆ ਰਿਹਾ ਹੈ"
+      }
+    },
+    "controls": {
+      "searchPlaceholder": "ਖ਼ਬਰਾਂ ਖੋਜੋ...",
+      "apply": "ਲਾਗੂ ਕਰੋ"
+    },
+    "buttons": {
+      "open": "ਖੋਲ੍ਹੋ"
+    },
+    "categories": {
+      "all": "ਸਭ",
+      "business": "ਕਾਰੋਬਾਰ",
+      "technology": "ਤਕਨਾਲੋਜੀ",
+      "entertainment": "ਮਨੋਰੰਜਨ",
+      "sports": "ਖੇਡਾਂ",
+      "science": "ਵਿਗਿਆਨ",
+      "health": "ਸਿਹਤ",
+      "politics": "ਰਾਜਨੀਤੀ"
+    },
+    "sorts": {
+      "publishedAt": "ਸਭ ਤੋਂ ਨਵਾਂ",
+      "relevancy": "ਸਬੰਧਿਤਤਾ",
+      "popularity": "ਲੋਕਪ੍ਰਿਯਤਾ"
+    },
+    "article": {
+      "read": "ਪੜ੍ਹੋ",
+      "analyze": "ਵਿਸ਼ਲੇਸ਼ਣ ਕਰੋ",
+      "unknownSource": "ਅਣਜਾਣ ਸਰੋਤ"
+    },
+    "trending": {
+      "title": "ਅੱਜ ਦਾ ਟ੍ਰੈਂਡਿੰਗ",
+      "none": "ਕੋਈ ਟ੍ਰੈਂਡਿੰਗ ਆਈਟਮ ਨਹੀਂ"
+    },
+    "states": {
+      "noResults": "ਕੋਈ ਖ਼ਬਰ ਨਹੀਂ ਮਿਲੀ",
+      "loadingMore": "ਹੋਰ ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...",
+      "noMore": "ਹੋਰ ਨਤੀਜੇ ਨਹੀਂ"
+    }
   }
+
+
 }

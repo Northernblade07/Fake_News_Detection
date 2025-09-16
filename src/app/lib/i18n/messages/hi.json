@@ -123,5 +123,53 @@
       "primary": "शुरू करें",
       "secondary": "मुफ़्त में आज़माएँ"
     }
+  },
+  "explore": {
+    "sidebar": {
+      "categories": "श्रेणियाँ",
+      "dashboardCta": "डैशबोर्ड पर जाएँ",
+      "bookmarks": {
+        "title": "बुकमार्क्स",
+        "signIn": "सहेजे गए आइटम देखने के लिए साइन इन करें।",
+        "soon": "जल्द आ रहा है"
+      }
+    },
+    "controls": {
+      "searchPlaceholder": "समाचार खोजें...",
+      "apply": "लागू करें"
+    },
+    "buttons": {
+      "open": "खोलें"
+    },
+    "categories": {
+      "all": "सभी",
+      "business": "व्यवसाय",
+      "technology": "प्रौद्योगिकी",
+      "entertainment": "मनोरंजन",
+      "sports": "खेल",
+      "science": "विज्ञान",
+      "health": "स्वास्थ्य",
+      "politics": "राजनीति"
+    },
+    "sorts": {
+      "publishedAt": "नवीनतम",
+      "relevancy": "प्रासंगिकता",
+      "popularity": "लोकप्रियता"
+    },
+    "article": {
+      "read": "पढ़ें",
+      "analyze": "विश्लेषण करें",
+      "unknownSource": "अज्ञात स्रोत"
+    },
+    "trending": {
+      "title": "आज की ट्रेंडिंग",
+      "none": "कोई ट्रेंडिंग आइटम नहीं"
+    },
+    "states": {
+      "noResults": "कोई समाचार नहीं मिला",
+      "loadingMore": "और लोड हो रहा है...",
+      "noMore": "और परिणाम नहीं"
+    }
   }
+
 }

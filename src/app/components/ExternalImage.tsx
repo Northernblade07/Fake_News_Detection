@@ -35,7 +35,7 @@ export default function ExternalImage({ src, alt = "", className }: ExternalImag
   try {
     const url = new URL(src);
     if (WHITELISTED_DOMAINS.includes(url.hostname)) {
-      return <Image src={src} alt={alt} fill className={`${className} object-cover`} />;
+      return <Image src={src} alt={alt} fill className={`${className} h-full w-full object-cover`} />;
     }
   } catch (err) {
     console.log(err)

@@ -123,5 +123,55 @@
       "primary": "ആരംഭിക്കുക",
       "secondary": "സൗജന്യമായി ശ്രമിക്കുക"
     }
+  },
+  
+  "explore": {
+    "sidebar": {
+      "categories": "വിഭാഗങ്ങൾ",
+      "dashboardCta": "ഡാഷ്‌ബോർഡിലേക്ക് പോകുക",
+      "bookmarks": {
+        "title": "ബുക്ക്മാർക്കുകൾ",
+        "signIn": "സേവ് ചെയ്ത ഇനങ്ങൾ കാണാൻ സൈൻ ഇൻ ചെയ്യുക.",
+        "soon": "വേഗം വരുന്നു"
+      }
+    },
+    "controls": {
+      "searchPlaceholder": "വാർത്തകൾ തിരയുക...",
+      "apply": "പ്രയോഗിക്കുക"
+    },
+    "buttons": {
+      "open": "തുറക്കുക"
+    },
+    "categories": {
+      "all": "എല്ലാം",
+      "business": "ബിസിനസ്",
+      "technology": "സാങ്കേതികവിദ്യ",
+      "entertainment": "വിനോദം",
+      "sports": "കായികം",
+      "science": "ശാസ്‌ത്രം",
+      "health": "ആരോഗ്യം",
+      "politics": "രാഷ്ട്രീയം"
+    },
+    "sorts": {
+      "publishedAt": "പുതിയത്",
+      "relevancy": "പ്രാസക്ത്യം",
+      "popularity": "ജനപ്രിയത"
+    },
+    "article": {
+      "read": "വായിക്കുക",
+      "analyze": "വിശകലനം ചെയ്യുക",
+      "unknownSource": "അജ്ഞാത ഉറവിടം"
+    },
+    "trending": {
+      "title": "ഇന്നത്തെ ട്രെൻഡിംഗ്",
+      "none": "ട്രെൻഡിംഗ് ഇനങ്ങളൊന്നുമില്ല"
+    },
+    "states": {
+      "noResults": "വാർത്തകളൊന്നും കണ്ടെത്താനായില്ല",
+      "loadingMore": "കൂടുതൽ ലോഡ് ചെയ്യുന്നു...",
+      "noMore": "കൂടുതൽ ഫലങ്ങൾ ഇല്ല"
+    }
   }
+
+
 }

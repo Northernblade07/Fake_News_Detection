@@ -123,5 +123,55 @@
       "primary": "ಪ್ರಾರಂಭಿಸಿ",
       "secondary": "ಉಚಿತವಾಗಿ ಪ್ರಯತ್ನಿಸಿ"
     }
+  },
+  
+  "explore": {
+    "sidebar": {
+      "categories": "ವರ್ಗಗಳು",
+      "dashboardCta": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಹೋಗಿ",
+      "bookmarks": {
+        "title": "ಬುಕ್‌ಮಾರ್ಕ್‌ಗಳು",
+        "signIn": "ಉಳಿಸಿದ ಅಂಶಗಳನ್ನು ವೀಕ್ಷಿಸಲು ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+        "soon": "ಶೀಘ್ರದಲ್ಲೇ ಬರುತ್ತಿದೆ"
+      }
+    },
+    "controls": {
+      "searchPlaceholder": "ಸುದ್ದಿ ಹುಡುಕಿ...",
+      "apply": "ಅನ್ವಯಿಸಿ"
+    },
+    "buttons": {
+      "open": "ತೆರೆಯಿರಿ"
+    },
+    "categories": {
+      "all": "ಎಲ್ಲಾ",
+      "business": "ವ್ಯಾಪಾರ",
+      "technology": "ತಂತ್ರಜ್ಞಾನ",
+      "entertainment": "ಮನೋರಂಜನೆ",
+      "sports": "ಕ್ರೀಡೆ",
+      "science": "ವಿಜ್ಞಾನ",
+      "health": "ಆರೋಗ್ಯ",
+      "politics": "ರಾಜಕೀಯ"
+    },
+    "sorts": {
+      "publishedAt": "ಹೊಸದವು",
+      "relevancy": "ಸಂಬಂಧಿತತೆ",
+      "popularity": "ಜನಪ್ರಿಯತೆ"
+    },
+    "article": {
+      "read": "ಓದಿ",
+      "analyze": "ವಿಶ್ಲೇಷಿಸಿ",
+      "unknownSource": "ಅಪರಿಚಿತ ಮೂಲ"
+    },
+    "trending": {
+      "title": "ಇಂದಿನ ಟ್ರೆಂಡಿಂಗ್",
+      "none": "ಟ್ರೆಂಡಿಂಗ್ ಅಂಶಗಳಿಲ್ಲ"
+    },
+    "states": {
+      "noResults": "ಯಾವುದೇ ಸುದ್ದಿ ಲಭ್ಯವಿಲ್ಲ",
+      "loadingMore": "ಇನ್ನಷ್ಟು ಲೋಡ್ ಆಗುತ್ತಿದೆ...",
+      "noMore": "ಇನ್ನಷ್ಟು ಫಲಿತಾಂಶಗಳಿಲ್ಲ"
+    }
   }
+
+
 }

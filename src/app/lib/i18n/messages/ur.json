@@ -123,5 +123,55 @@
       "primary": "شروع کریں",
       "secondary": "مفت آزمائیں"
     }
+  },
+  
+  "explore": {
+    "sidebar": {
+      "categories": "زمرے",
+      "dashboardCta": "ڈیش بورڈ پر جائیں",
+      "bookmarks": {
+        "title": "بک مارکس",
+        "signIn": "محفوظ آئٹمز دیکھنے کے لیے سائن ان کریں۔",
+        "soon": "جلد آرہا ہے"
+      }
+    },
+    "controls": {
+      "searchPlaceholder": "خبریں تلاش کریں...",
+      "apply": "لاگو کریں"
+    },
+    "buttons": {
+      "open": "کھولیں"
+    },
+    "categories": {
+      "all": "سب",
+      "business": "کاروبار",
+      "technology": "ٹیکنالوجی",
+      "entertainment": "تفریح",
+      "sports": "کھیل",
+      "science": "سائنس",
+      "health": "صحت",
+      "politics": "سیاست"
+    },
+    "sorts": {
+      "publishedAt": "نیا ترین",
+      "relevancy": "مطابقت",
+      "popularity": "مقبولیت"
+    },
+    "article": {
+      "read": "پڑھیں",
+      "analyze": "تجزیہ کریں",
+      "unknownSource": "نامعلوم ماخذ"
+    },
+    "trending": {
+      "title": "آج کا ٹرینڈنگ",
+      "none": "کوئی ٹرینڈنگ آئٹمز نہیں"
+    },
+    "states": {
+      "noResults": "کوئی خبر نہیں ملی",
+      "loadingMore": "مزید لوڈ ہو رہا ہے...",
+      "noMore": "مزید نتائج نہیں"
+    }
   }
+
+
 }

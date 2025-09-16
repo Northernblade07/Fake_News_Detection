@@ -127,5 +127,55 @@
       "primary": "सुरू करा",
       "secondary": "मोफत प्रयत्न करा"
     }
+  },
+  
+  "explore": {
+    "sidebar": {
+      "categories": "श्रेण्या",
+      "dashboardCta": "डॅशबोर्डवर जा",
+      "bookmarks": {
+        "title": "बुकमार्क्स",
+        "signIn": "जतन केलेल्या आयटम पाहण्यासाठी साइन इन करा.",
+        "soon": "लवकरच येत आहे"
+      }
+    },
+    "controls": {
+      "searchPlaceholder": "बातम्या शोधा...",
+      "apply": "लागू करा"
+    },
+    "buttons": {
+      "open": "उघडा"
+    },
+    "categories": {
+      "all": "सर्व",
+      "business": "व्यवसाय",
+      "technology": "तंत्रज्ञान",
+      "entertainment": "मनोरंजन",
+      "sports": "क्रीडा",
+      "science": "विज्ञान",
+      "health": "आरोग्य",
+      "politics": "राजकारण"
+    },
+    "sorts": {
+      "publishedAt": "नवीनतम",
+      "relevancy": "संबंधितता",
+      "popularity": "लोकप्रियता"
+    },
+    "article": {
+      "read": "वाचा",
+      "analyze": "विश्लेषण करा",
+      "unknownSource": "अज्ञात स्त्रोत"
+    },
+    "trending": {
+      "title": "आजचे ट्रेंडिंग",
+      "none": "कोणतेही ट्रेंडिंग आयटम नाहीत"
+    },
+    "states": {
+      "noResults": "कोणतीही बातमी आढळली नाही",
+      "loadingMore": "अजून लोड होत आहे...",
+      "noMore": "अधिक निकाल नाहीत"
+    }
   }
 }
+
+

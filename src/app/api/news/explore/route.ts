@@ -1,6 +1,5 @@
 // app/api/news/explore/route.ts
 export const runtime = "nodejs";
-export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
 import crypto from "node:crypto";
@@ -16,7 +15,6 @@ type NewsItem = {
   description: string | null;
 };
 
-// NewsAPI Article type
 interface NewsAPIArticle {
   source?: { id?: string; name?: string };
   author?: string;
@@ -25,10 +23,15 @@ interface NewsAPIArticle {
   url?: string;
   urlToImage?: string;
   publishedAt?: string;
-  content?: string;
+}
+interface NewsAPIResponse {
+  status?: string;
+  totalResults?: number;
+  articles?: NewsAPIArticle[];
+  code?: string;
+  message?: string;
 }
 
-// GNews Article type
 interface GNewsArticle {
   id?: string;
   source?: { name?: string };
@@ -37,16 +40,25 @@ interface GNewsArticle {
   url?: string;
   image?: string;
   publishedAt?: string;
-  content?: string;
+}
+interface GNewsResponse {
+  totalArticles?: number;
+  articles?: GNewsArticle[];
+  error?: string;
 }
 
-// Safe date parser
+type CursorState = {
+  newsapiPage: number;
+  gnewsPage: number;
+  lastPublishedAt: string | null;
+  sig: { q: string; category: string; sortBy: string; lang: string; country: string; pageSize: number };
+};
+
 const parseDate = (d?: string | null) => {
   const t = new Date(d || "");
   return isNaN(t.getTime()) ? 0 : t.getTime();
 };
 
-// Map NewsAPI item to NewsItem
 function mapNewsAPIItem(a: NewsAPIArticle): NewsItem {
   return {
     id: a.url ?? crypto.randomUUID(),
@@ -55,11 +67,10 @@ function mapNewsAPIItem(a: NewsAPIArticle): NewsItem {
     source: a.source?.name ?? a.author ?? null,
     publishedAt: a.publishedAt ?? null,
     urlToImage: a.urlToImage ?? null,
-    description: a.description ?? null
+    description: a.description ?? null,
   };
 }
 
-// Map GNews item to NewsItem
 function mapGNewsItem(a: GNewsArticle): NewsItem {
   return {
     id: a.url ?? a.id ?? crypto.randomUUID(),
@@ -68,21 +79,23 @@ function mapGNewsItem(a: GNewsArticle): NewsItem {
     source: a.source?.name ?? null,
     publishedAt: a.publishedAt ?? null,
     urlToImage: a.image ?? null,
-    description: a.description ?? null
+    description: a.description ?? null,
   };
 }
 
-// Deduplicate articles by URL
 function dedupe(items: NewsItem[]): NewsItem[] {
-  const seen = new Map<string, NewsItem>();
+  const seen = new Set<string>();
+  const out: NewsItem[] = [];
   for (const it of items) {
     const key = (it.url || "").toLowerCase();
-    if (!seen.has(key)) seen.set(key, it);
+    if (!seen.has(key)) {
+      seen.add(key);
+      out.push(it);
+    }
   }
-  return Array.from(seen.values());
+  return out;
 }
 
-// Map frontend category to GNews category
 function mapCategoryToGNews(category: string): string {
   const mapping: Record<string, string> = {
     all: "general",
@@ -92,130 +105,183 @@ function mapCategoryToGNews(category: string): string {
     sports: "sports",
     science: "science",
     health: "health",
-    politics: "nation"
+    politics: "nation",
   };
   return mapping[category] || "general";
 }
 
-// Helper to fetch NewsAPI
-async function fetchNewsAPI(
-  Nkey: string,
+function encodeCursor(c: CursorState): string {
+  const json = JSON.stringify(c);
+  return Buffer.from(json).toString("base64url");
+}
+function decodeCursor(s: string | null): CursorState | null {
+  if (!s) return null;
+  try {
+    const json = Buffer.from(s, "base64url").toString("utf8");
+    const obj = JSON.parse(json) as CursorState;
+    if (
+      typeof obj.newsapiPage === "number" &&
+      typeof obj.gnewsPage === "number"
+    ) {
+      return obj;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+async function fetchNewsAPIPage(
   q: string,
   category: string,
   sortBy: string,
   page: number,
   pageSize: number,
   lang: string,
-  country: string
-): Promise<NewsItem[]> {
-  try {
-    const Nkey = process.env.NEWS_API_KEY!;
-    const base = "https://newsapi.org/v2";
-    const url = q
-      ? `${base}/everything?language=${lang}&q=${encodeURIComponent(q)}&sortBy=${encodeURIComponent(sortBy)}&page=${page}&pageSize=${pageSize}&apiKey=${Nkey}`
-      : `${base}/top-headlines?country=${country}${category !== "all" ? `&category=${encodeURIComponent(category)}` : ""}&page=${page}&pageSize=${pageSize}&apiKey=${Nkey}`;
+  country: string,
+  toISO?: string | null
+): Promise<{ items: NewsItem[]; hasMore: boolean }> {
+  const key = process.env.NEWS_API_KEY;
+  if (!key) return { items: [], hasMore: false };
 
-    const res = await fetch(url, { next: { revalidate: 60 * 60 * 2 } });
-    const json = await res.json();
-    if (!res.ok || !Array.isArray(json.articles)) return [];
-    return json.articles.map(mapNewsAPIItem);
-  } catch (err) {
-    console.log(err)
-    return [];
-  }
+  const base = "https://newsapi.org/v2";
+  // Everything supports from/to; Top-headlines does not support from/to [1][2].
+  const url = q
+    ? `${base}/everything?language=${lang}&q=${encodeURIComponent(q)}&sortBy=${encodeURIComponent(
+        sortBy
+      )}&page=${page}&pageSize=${pageSize}${toISO ? `&to=${encodeURIComponent(toISO)}` : ""}&apiKey=${key}`
+    : `${base}/top-headlines?country=${country}${
+        category !== "all" ? `&category=${encodeURIComponent(category)}` : ""
+      }&page=${page}&pageSize=${pageSize}&apiKey=${key}`;
+
+  const res = await fetch(url, { next: { tags: ["news:explore"] } });
+  const json: NewsAPIResponse = await res.json();
+  if (!res.ok || !Array.isArray(json.articles)) return { items: [], hasMore: false };
+
+  const items = json.articles.map(mapNewsAPIItem);
+  const hasMore = (json.articles?.length ?? 0) === pageSize;
+  return { items, hasMore };
 }
 
-// Helper to fetch GNews
-async function fetchGNews(
-  Gkey: string,
+async function fetchGNewsPage(
   q: string,
   category: string,
-  sortBy: string,
   page: number,
   pageSize: number,
   lang: string,
-  country: string
-): Promise<NewsItem[]> {
-  try {
-    const Gkey = process.env.GNEWS_API_KEY!;
-    const base = "https://gnews.io/api/v4";
-    const gCategory = mapCategoryToGNews(category);
-    const url = q
-      ? `${base}/search?q=${encodeURIComponent(q)}&lang=${lang}&country=${country}&max=${pageSize}&page=${page}&sortby=${sortBy === "publishedAt" ? "publishedAt" : "relevance"}&apikey=${Gkey}`
-      : `${base}/top-headlines?category=${gCategory}&lang=${lang}&country=${country}&max=${pageSize}&page=${page}&apikey=${Gkey}`;
+  country: string,
+  sortBy: "publishedAt" | "relevance",
+  toISO?: string | null
+): Promise<{ items: NewsItem[]; hasMore: boolean }> {
+  const key = process.env.GNEWS_API_KEY;
+  if (!key) return { items: [], hasMore: false };
 
-    const res = await fetch(url, { next: { revalidate: 60 * 60 * 2 } });
-    const json = await res.json();
-    if (!res.ok || !Array.isArray(json.articles)) return [];
-    return json.articles.map(mapGNewsItem);
-  } catch (err) {
-    console.log(err);
-    return [];
-  }
+  const base = "https://gnews.io/api/v4";
+  const gCategory = mapCategoryToGNews(category);
+  // GNews search and top-headlines both support from/to, page, and max [3][4].
+  const common = `lang=${lang}&country=${country}&max=${pageSize}&page=${page}${
+    toISO ? `&to=${encodeURIComponent(toISO)}` : ""
+  }&apikey=${key}`;
+
+  const url = q
+    ? `${base}/search?q=${encodeURIComponent(q)}&sortby=${sortBy}&${common}`
+    : `${base}/top-headlines?category=${gCategory}&${common}`;
+
+  const res = await fetch(url, { next: { tags: ["news:explore"] } });
+  const json: GNewsResponse = await res.json();
+  if (!res.ok || !Array.isArray(json.articles)) return { items: [], hasMore: false };
+
+  const items = json.articles.map(mapGNewsItem);
+  const hasMore = (json.articles?.length ?? 0) === pageSize;
+  return { items, hasMore };
 }
 
-// Main route
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const q = searchParams.get("q") || "";
     const category = searchParams.get("category") || "all";
     const sortBy = searchParams.get("sortBy") || "publishedAt";
-    const page = Math.max(1, Number(searchParams.get("page") || "1"));
     const pageSize = Math.min(50, Math.max(1, Number(searchParams.get("pageSize") || "12")));
     const lang = searchParams.get("lang") || "en";
     const country = searchParams.get("country") || "in";
+    const cursorRaw = searchParams.get("cursor");
 
-    const NEWSAPI_KEY = process.env.NEWS_API_KEY;
-    const GNEWS_KEY = process.env.GNEWS_API_KEY;
+    const sig = { q, category, sortBy, lang, country, pageSize };
+    const decoded = decodeCursor(cursorRaw);
+    const cursorMatches =
+      decoded &&
+      decoded.sig.q === q &&
+      decoded.sig.category === category &&
+      decoded.sig.sortBy === sortBy &&
+      decoded.sig.lang === lang &&
+      decoded.sig.country === country &&
+      decoded.sig.pageSize === pageSize;
 
-    if (!NEWSAPI_KEY && !GNEWS_KEY) {
-      return NextResponse.json({ error: "No API keys configured" }, { status: 500 });
+    let newsapiPage = cursorMatches ? decoded!.newsapiPage : 1;
+    let gnewsPage = cursorMatches ? decoded!.gnewsPage : 1;
+    const lastPublishedAt = cursorMatches ? decoded!.lastPublishedAt : null;
+
+    // Optional “to” optimization: steer providers to return items older than cursor
+    const toISO = lastPublishedAt ?? null;
+
+    // Gather enough items to fill one page, possibly advancing provider pages
+    const collected: NewsItem[] = [];
+    let naHasMore = true;
+    let gnHasMore = true;
+    let safety = 0;
+
+    // Refill loop: fetch one page per provider per iteration until enough items or no more
+    while (collected.length < pageSize && safety < 5 && (naHasMore || gnHasMore)) {
+      safety++;
+
+      const [na, gn] = await Promise.all([
+        fetchNewsAPIPage(q, category, sortBy, newsapiPage, pageSize, lang, country, toISO),
+        fetchGNewsPage(q, category, gnewsPage, pageSize, lang, country, "publishedAt", toISO),
+      ]);
+
+      newsapiPage += na.items.length > 0 || na.hasMore ? 1 : 0;
+      gnewsPage += gn.items.length > 0 || gn.hasMore ? 1 : 0;
+      naHasMore = na.hasMore;
+      gnHasMore = gn.hasMore;
+
+      // Merge freshly fetched items into a staging pool
+      const merged = dedupe([...collected, ...na.items, ...gn.items]);
+      // Sort newest first (publishedAt desc)
+      merged.sort((a, b) => parseDate(b.publishedAt) - parseDate(a.publishedAt));
+      // If cursor exists, only keep items strictly older than the cursor timestamp
+      const olderOnly = lastPublishedAt ? merged.filter((a) => parseDate(a.publishedAt) < parseDate(lastPublishedAt)) : merged;
+
+      // Keep only up to pageSize in the collected buffer this round (remaining items will be reconsidered in the next loop if needed)
+      collected.splice(0, collected.length, ...olderOnly.slice(0, pageSize));
+      // If still short of pageSize, the loop will fetch next provider pages
     }
 
-    // Fetch concurrently
-    const [newsAPIArticles, gNewsArticles] = await Promise.all([
-      NEWSAPI_KEY ? fetchNewsAPI(NEWSAPI_KEY, q, category, sortBy, page, pageSize, lang, country) : Promise.resolve([]),
-      GNEWS_KEY ? fetchGNews(GNEWS_KEY, q, category, sortBy, page, pageSize, lang, country) : Promise.resolve([])
-    ]);
+    const articles = collected.slice(0, pageSize);
+    const nextCursor =
+      articles.length > 0
+        ? encodeCursor({
+            newsapiPage,
+            gnewsPage,
+            lastPublishedAt: articles[articles.length - 1].publishedAt ?? null,
+            sig,
+          })
+        : null;
 
-    // Merge and dedupe
-    const allArticles = dedupe([...newsAPIArticles, ...gNewsArticles]);
-
-    // Sort
-    const sortedArticles = [...allArticles];
-    if (sortBy === "publishedAt") {
-      sortedArticles.sort((a, b) => parseDate(b.publishedAt) - parseDate(a.publishedAt));
-    } else if (sortBy === "popularity") {
-      sortedArticles.sort((a, b) => {
-        const aw = (a.urlToImage ? 1 : 0) + (a.source ? 1 : 0);
-        const bw = (b.urlToImage ? 1 : 0) + (b.source ? 1 : 0);
-        if (bw !== aw) return bw - aw;
-        return parseDate(b.publishedAt) - parseDate(a.publishedAt);
-      });
-    }
-
-    // Server-side pagination
-    const start = (page - 1) * pageSize;
-    const paginated = sortedArticles.slice(start, start + pageSize);
-
-    // Trending (dynamic per country)
+    // Sidebar trending from NewsAPI Top Headlines or Everything first slice
     let trending: NewsItem[] = [];
-    if (NEWSAPI_KEY) {
-      trending = await fetchNewsAPI(NEWSAPI_KEY, "", "all", "publishedAt", 1, 8, lang, country);
+    if (process.env.NEWS_API_KEY) {
+      const t = await fetchNewsAPIPage("", "all", "publishedAt", 1, 8, lang, country, null);
+      trending = t.items;
     }
+
+    const hasMore = Boolean(nextCursor);
 
     return NextResponse.json({
-      articles: paginated,
+      articles,
       trending,
-      page,
-      pageSize,
-      total: sortedArticles.length,
-      debug: {
-        newsAPICount: newsAPIArticles.length,
-        gNewsCount: gNewsArticles.length,
-        totalBeforePagination: allArticles.length
-      }
+      nextCursor,
+      hasMore,
     });
   } catch (err) {
     console.error("Route error:", err);

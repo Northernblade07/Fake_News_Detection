@@ -123,5 +123,55 @@
       "primary": "ଆରମ୍ଭ କରନ୍ତୁ",
       "secondary": "ନିଶୁଳ୍କ ଚେଷ୍ଟା କରନ୍ତୁ"
     }
+  },
+  
+  "explore": {
+    "sidebar": {
+      "categories": "ଶ୍ରେଣୀଗୁଡ଼ିକ",
+      "dashboardCta": "ଡ୍ୟାଶବୋର୍ଡକୁ ଯାଅନ୍ତୁ",
+      "bookmarks": {
+        "title": "ବୁକମାର୍କ୍ସ",
+        "signIn": "ସଞ୍ଚୟିତ ବସ୍ତୁଗୁଡ଼ିକ ଦେଖିବାକୁ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ।",
+        "soon": "ଶୀଘ୍ର ଆସୁଛି"
+      }
+    },
+    "controls": {
+      "searchPlaceholder": "ଖବର ଖୋଜନ୍ତୁ...",
+      "apply": "ଲାଗୁ କରନ୍ତୁ"
+    },
+    "buttons": {
+      "open": "ଖୋଲନ୍ତୁ"
+    },
+    "categories": {
+      "all": "ସମସ୍ତ",
+      "business": "ବ୍ୟାପାର",
+      "technology": "ପ୍ରଯୁକ୍ତି",
+      "entertainment": "ମନୋରଞ୍ଜନ",
+      "sports": "କ୍ରୀଡ଼ା",
+      "science": "ବିଜ୍ଞାନ",
+      "health": "ସ୍ୱାସ୍ଥ୍ୟ",
+      "politics": "ରାଜନୀତି"
+    },
+    "sorts": {
+      "publishedAt": "ନୂତନତମ",
+      "relevancy": "ସାପେକ୍ଷତା",
+      "popularity": "ଲୋକପ୍ରିୟତା"
+    },
+    "article": {
+      "read": "ପଢନ୍ତୁ",
+      "analyze": "ବିଶ୍ଳେଷଣ କରନ୍ତୁ",
+      "unknownSource": "ଅଜଣା ସ୍ରୋତ"
+    },
+    "trending": {
+      "title": "ଆଜିର ଟ୍ରେଣ୍ଡିଙ୍ଗ",
+      "none": "କୌଣସି ଟ୍ରେଣ୍ଡିଙ୍ଗ ଆଇଟମ୍ ନାହିଁ"
+    },
+    "states": {
+      "noResults": "କୌଣସି ଖବର ମିଳିଲା ନାହିଁ",
+      "loadingMore": "ଆଉ ଲୋଡ୍ ହେଉଛି...",
+      "noMore": "ଆଉ ଫଳାଫଳ ନାହିଁ"
+    }
   }
+
+
 }

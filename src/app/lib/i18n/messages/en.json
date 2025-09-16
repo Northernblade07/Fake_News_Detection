@@ -130,5 +130,54 @@
   "secondary": "Try for Free"
 
     }
+  },
+  "explore": {
+    "sidebar": {
+      "categories": "Categories",
+      "dashboardCta": "Go to dashboard",
+      "bookmarks": {
+        "title": "Bookmarks",
+        "signIn": "Sign in to view saved items.",
+        "soon": "Coming soon"
+      }
+    },
+    "controls": {
+      "searchPlaceholder": "Search news...",
+      "apply": "Apply"
+    },
+    "buttons": {
+      "open": "Open"
+    },
+    "categories": {
+      "all": "All",
+      "business": "Business",
+      "technology": "Technology",
+      "entertainment": "Entertainment",
+      "sports": "Sports",
+      "science": "Science",
+      "health": "Health",
+      "politics": "Politics"
+    },
+    "sorts": {
+      "publishedAt": "Newest",
+      "relevancy": "Relevancy",
+      "popularity": "Popularity"
+    },
+    "article": {
+      "read": "Read",
+      "analyze": "Analyze",
+      "unknownSource": "Unknown source"
+    },
+    "trending": {
+      "title": "Trending today",
+      "none": "No trending items"
+    },
+    "states": {
+      "noResults": "No news found",
+      "loadingMore": "Loading more...",
+      "noMore": "No more results"
+    }
   }
 }
+
+

@@ -127,5 +127,55 @@
       "primary": "ప్రారంభించండి",
       "secondary": "ఉచితంగా ప్రయత్నించండి"
     }
+  },
+  
+  "explore": {
+    "sidebar": {
+      "categories": "వర్గాలు",
+      "dashboardCta": "డ్యాష్‌బోర్డ్‌కు వెళ్లండి",
+      "bookmarks": {
+        "title": "బుక్‌మార్క్స్",
+        "signIn": "సేవ్ చేసిన అంశాలను చూడటానికి సైన్ ఇన్ చేయండి.",
+        "soon": "త్వరలో వస్తోంది"
+      }
+    },
+    "controls": {
+      "searchPlaceholder": "వార్తలు వెతకండి...",
+      "apply": "వర్తించండి"
+    },
+    "buttons": {
+      "open": "తెరవండి"
+    },
+    "categories": {
+      "all": "అన్నీ",
+      "business": "వ్యాపారం",
+      "technology": "సాంకేతికత",
+      "entertainment": "వినోదం",
+      "sports": "క్రీడలు",
+      "science": "విజ్ఞానం",
+      "health": "ఆరోగ్యం",
+      "politics": "రాజకీయాలు"
+    },
+    "sorts": {
+      "publishedAt": "తాజావి",
+      "relevancy": "సంబంధితత",
+      "popularity": "ప్రాచుర్యం"
+    },
+    "article": {
+      "read": "చదవండి",
+      "analyze": "విశ్లేషించండి",
+      "unknownSource": "తెలియని మూలం"
+    },
+    "trending": {
+      "title": "ఈ రోజు ట్రెండింగ్",
+      "none": "ట్రెండింగ్ అంశాలు లేవు"
+    },
+    "states": {
+      "noResults": "వార్తలు కనబడలేదు",
+      "loadingMore": "ఇంకా లోడ్ అవుతోంది...",
+      "noMore": "ఇంకా ఫలితాలు లేవు"
+    }
   }
+
+
 }

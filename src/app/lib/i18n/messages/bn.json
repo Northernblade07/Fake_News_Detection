@@ -127,5 +127,52 @@
       "primary": "শুরু করুন",
       "secondary": "বিনামূল্যে চেষ্টা করুন"
     }
-  }
+  },
+ "explore": {
+    "sidebar": {
+      "categories": "বিভাগসমূহ",
+      "dashboardCta": "ড্যাশবোর্ডে যান",
+      "bookmarks": {
+        "title": "বুকমার্কস",
+        "signIn": "সংরক্ষিত আইটেম দেখতে সাইন ইন করুন।",
+        "soon": "শীঘ্রই আসছে"
+      }
+    },
+    "controls": {
+      "searchPlaceholder": "খবর সন্ধান করুন...",
+      "apply": "প্রয়োগ করুন"
+    },
+    "buttons": {
+      "open": "খুলুন"
+    },
+    "categories": {
+      "all": "সব",
+      "business": "ব্যবসা",
+      "technology": "প্রযুক্তি",
+      "entertainment": "বিনোদন",
+      "sports": "খেলাধুলা",
+      "science": "বিজ্ঞান",
+      "health": "স্বাস্থ্য",
+      "politics": "রাজনীতি"
+    },
+    "sorts": {
+      "publishedAt": "সর্বশেষ",
+      "relevancy": "প্রাসঙ্গিকতা",
+      "popularity": "জনপ্রিয়তা"
+    },
+    "article": {
+      "read": "পড়ুন",
+      "analyze": "বিশ্লেষণ করুন",
+      "unknownSource": "অজানা উৎস"
+    },
+    "trending": {
+      "title": "আজকের ট্রেন্ডিং",
+      "none": "কোনো ট্রেন্ডিং আইটেম নেই"
+    },
+    "states": {
+      "noResults": "কোনো খবর পাওয়া যায়নি",
+      "loadingMore": "আরও লোড হচ্ছে...",
+      "noMore": "আর ফলাফল নেই"
+    }
+  } 
 }
