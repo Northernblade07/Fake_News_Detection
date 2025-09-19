@@ -1,6 +1,6 @@
 /* app/globals.css */
 @import "tailwindcss";
-
+@import 'tailwind-scrollbar-hide/v4';
 /* Tailwind v4 tokens: use as bg-brand-bg, from-brand-blue, border-brand-border, etc. */
 @theme {
   --color-brand-bg: #0B0F1A;        /* deep navy */
@@ -25,3 +25,4 @@
     @apply inline-flex items-center justify-center gap-2 rounded-lg border border-brand-border bg-transparent px-4 py-2 text-slate-100 hover:border-brand-blue transition disabled:opacity-60 w-full;
   }
 }
+  

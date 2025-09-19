@@ -19,6 +19,7 @@ const nextConfig: NextConfig = {
       "cdn.vox-cdn.com",
       "encrypted-tbn0.gstatic.com",
       "images.financialexpressdigital.com",
+      "api.dicebear.com",
     ],
   },
 };

@@ -82,7 +82,7 @@ export default function LoginPage() {
         </div>
 
         <div className="mt-6 flex items-center justify-between text-sm">
-          <Link href="/(auth)/password/forgot" className={linkAccent}>
+          <Link href="/forgot-password" className={linkAccent}>
             Forgot password?
           </Link>
           <Link href="/register" className={linkAccent}>
