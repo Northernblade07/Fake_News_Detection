@@ -1,4 +1,4 @@
-// lib/cloudinary.ts
+// app/lib/cloudinary.ts
 import { v2 as cloudinary } from "cloudinary";
 
 function requireEnv(name: string): string {

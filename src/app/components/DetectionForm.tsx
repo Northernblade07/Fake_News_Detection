@@ -63,6 +63,7 @@ export default function DetectionForm() {
         fd.append("text", v);
       } else {
         if (!file) throw new Error("File is required");
+        if (file.size > 25 * 1024 * 1024) throw new Error("File too large (max 20MB)");
         fd.append("file", file);
       }
 
@@ -74,7 +75,7 @@ export default function DetectionForm() {
       const json: DetectionResponse = await res.json();
 
       if (!res.ok || "error" in json) {
-        throw new Error("Detection failed");
+        throw new Error("error" in json ? json.error : "Detection failed");
       }
 
       setResult(json);

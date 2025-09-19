@@ -23,6 +23,7 @@ export async function connectToDatabase(): Promise<Connection> {
   }
 
   if (!cached.promise) {
+    mongoose.set("strictQuery", true);
     const opts = {
       bufferCommands: false,
       maxPoolSize: 10,

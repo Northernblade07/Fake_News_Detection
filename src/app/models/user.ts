@@ -15,12 +15,14 @@ export interface IUser extends Document {
   lastOtpRequestAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
-
+  role:string;
   comparePassword(candidate: string): Promise<boolean>;
 }
 
 const userSchema = new Schema<IUser>(
   {
+    name: { type: String, trim: true },
+    role: { type: String, enum: ["user", "admin"], default: "user" },
     email: {
       type: String,
       required: [true, "Email is required"],

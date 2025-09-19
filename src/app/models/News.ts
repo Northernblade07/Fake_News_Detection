@@ -24,6 +24,7 @@ export interface INewsDetection extends Document {
     domain?: string;
     credibilityScore?: number;
   };
+  status: "pending" | "processing" | "done" | "error";
   result?: {
     label: "fake" | "real" | "unknown";
     probability: number;
@@ -85,7 +86,7 @@ const NewsDetectionSchema = new Schema<INewsDetection>(
 // 🔹 Indexes for faster queries
 NewsDetectionSchema.index({ user: 1, createdAt: -1 });
 NewsDetectionSchema.index({ "result.label": 1 });
-
+NewsDetectionSchema.index({ status: 1 });
 // 🔹 Pre-save hook to sanitize text
 NewsDetectionSchema.pre("save", function (next) {
   if (this.textContent) {

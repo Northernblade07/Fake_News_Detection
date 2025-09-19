@@ -171,14 +171,14 @@ export default function Navbar() {
           )}
         </div>
         {/* Mobile hamburger */}
-        <div className="md:hidden">
+        <div className="md:hidden absolute right-5">
           <button
             type="button"
             onClick={() => setOpen(true)}
             aria-label="Open navigation"
             aria-expanded={open}
             aria-controls="mobile-nav"
-            className="inline-flex items-center justify-center rounded-md border border-white/10 bg-[#0f1524] p-2 text-slate-200 hover:border-sky-400/30 hover:bg-[#111a2f] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40"
+            className="inline-flex items-end justify-center rounded-md border border-white/10 bg-[#0f1524] p-2 text-slate-200 hover:border-sky-400/30 hover:bg-[#111a2f] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40 left-0 "
           >
             <Menu className="h-5 w-5" />
           </button>
