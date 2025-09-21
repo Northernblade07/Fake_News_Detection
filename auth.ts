@@ -5,7 +5,7 @@ import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
 import bcrypt from "bcryptjs";
 
-import UserModel, { IUser } from "@/app/models/user";        // ✅ your Mongoose User schema
+import UserModel, { IUser } from "@/app/model/user";        // ✅ your Mongoose User schema
 import { connectToDatabase } from "@/app/lib/db"; // ✅ MongoDB connection helper
 
 const config: NextAuthConfig = {

@@ -16,6 +16,22 @@ type DetectionError = { error: string };
 
 type DetectionResponse = DetectionSuccess | DetectionError;
 
+const supportedLanguages = [
+  { code: "en", name: "English" },
+  { code: "hi", name: "Hindi" },
+  { code: "bn", name: "Bengali" },
+  { code: "mr", name: "Marathi" },
+  { code: "te", name: "Telugu" },
+  { code: "ta", name: "Tamil" },
+  { code: "gu", name: "Gujarati" },
+  { code: "ur", name: "Urdu" },
+  { code: "kn", name: "Kannada" },
+  { code: "or", name: "Odia" },
+  { code: "ml", name: "Malayalam" },
+  { code: "pa", name: "Punjabi" },
+];
+
+
 export default function DetectionForm() {
   const [kind, setKind] = useState<DetectType>("text");
   const [title, setTitle] = useState("");
@@ -25,7 +41,7 @@ export default function DetectionForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<DetectionResponse | null>(null);
-
+  const [lang, setLang] = useState("");
   const cardRef = useRef<HTMLFormElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
@@ -53,7 +69,7 @@ export default function DetectionForm() {
     try {
       const fd = new FormData();
       fd.append("type", kind);
-
+      fd.append("lang", lang); 
       if (title.trim()) fd.append("title", title.trim());
       if (sourceUrl.trim()) fd.append("sourceUrl", sourceUrl.trim());
 
@@ -115,7 +131,7 @@ export default function DetectionForm() {
       </header>
 
       {/* Segmented toggle */}
-      <div className="inline-flex rounded-xl border border-white/10 bg-[#0f1524] p-1 mb-5">
+      {/* <div className="inline-flex rounded-xl border border-white/10 bg-[#0f1524] p-1 mb-5">
         {(["text", "file"] as DetectType[]).map((k) => (
           <button
             key={k}
@@ -133,7 +149,45 @@ export default function DetectionForm() {
             {k === "text" ? "Text" : "File"}
           </button>
         ))}
+      </div> */}
+
+
+<div className="flex flex-wrap items-center gap-4 mb-5">
+        <div className="inline-flex rounded-xl border border-white/10 bg-[#0f1524] p-1">
+          {(["text", "file"] as DetectType[]).map((k) => (
+            <button
+              key={k}
+              type="button"
+              onClick={() => setKind(k)}
+              aria-pressed={kind === k}
+              className={`px-4 py-2 text-sm rounded-lg transition ${
+                kind === k
+                  ? k === "text"
+                    ? "bg-sky-500/20 text-sky-200 border border-sky-400/30 shadow-inner"
+                    : "bg-amber-500/20 text-amber-200 border border-amber-400/30 shadow-inner"
+                  : "text-slate-300 hover:text-white"
+              }`}
+            >
+              {k === "text" ? "Text" : "File"}
+            </button>
+          ))}
+        </div>
+
+        <label className="grid gap-2 ">
+          {/* <span className="text-xs text-slate-400">Language (optional)</span> */}
+          <select
+            value={lang}
+            onChange={(e) => setLang(e.target.value)}
+            disabled={busy}
+            className="rounded-lg border border-white/10 bg-[#0f1524] px-4 py-3 text-sm text-slate-100 outline-none ring-0 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/30 disabled:opacity-50"
+          >
+            {supportedLanguages.map(l => (
+              <option key={l.code} value={l.code}>{l.name}</option>
+            ))}
+          </select>
+        </label>
       </div>
+
 
       {/* Title + Source */}
       <div className="grid gap-4 md:grid-cols-2">

@@ -4,7 +4,7 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { connectToDatabase } from "@/app/lib/db";
-import User from "@/app/models/user";
+import User from "@/app/model/user";
 
 export async function POST(req: Request) {
   try {

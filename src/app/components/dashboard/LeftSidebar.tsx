@@ -15,7 +15,7 @@ const navItems = [
 
 export function LeftSidebar() {
   const pathname = usePathname();
-
+  
   return (
     <aside className="hidden lg:flex flex-col w-64 border-r border-brand-border p-6">
       <div className="flex items-center gap-3 mb-10">

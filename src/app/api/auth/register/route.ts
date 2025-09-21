@@ -2,7 +2,7 @@
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
-import User, { IUser } from "@/app/models/user";
+import User, { IUser } from "@/app/model/user";
 import { generateOTP, hashOTP, otpExpiryTimestamp } from "@/app/lib/otp";
 import { sendMail, otpEmailHtml } from "@/app/lib/mailer";
 import bcrypt from "bcryptjs";

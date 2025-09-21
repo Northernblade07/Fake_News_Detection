@@ -5,12 +5,13 @@ import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import { auth } from "@/../auth";
 import { connectToDatabase } from "@/app/lib/db";
-import NewsDetection, { INewsMedia } from "@/app/models/News";
-import DetectionLog from "@/app/models/detectionlog";
+import NewsDetection, { INewsMedia } from "@/app/model/News";
+import DetectionLog from "@/app/model/detectionlog";
 import { uploadBufferToCloudinary, normalizeResourceType } from "@/app/lib/cloudinary";
 import { validateType, validateText, validateOptionalUrl, readAndValidateFile } from "@/app/lib/validation";
 import { translateText, type LangISO } from "@/app/lib/ai/translate";
 import { ocrImageBuffer } from "@/app/lib/ai/ocr";
+import { detectLanguage } from "@/app/lib/ai/langDetect";
 
 type Classification = { label: "fake" | "real" | "unknown"; probability: number };
 
@@ -93,21 +94,37 @@ export async function POST(req: Request) {
     }
 
     // Normalize text for analysis
-    const rawLang = form.get("lang")?.toString() ?? "en";
-    const userLang: LangISO = (SUPPORTED_LANGS as readonly string[]).includes(rawLang)
-      ? (rawLang as LangISO)
-      : "en";
+    const rawLang = form.get("lang")?.toString() ?? null;
+    let userLang: LangISO = "en"; // Default to English
     const analysisLang: LangISO = "en";
 
+    // Priority 1: Use the language explicitly selected by the user, if it's supported.
+    if (rawLang && (SUPPORTED_LANGS as readonly string[]).includes(rawLang)) {
+      userLang = rawLang as LangISO;
+    }
+    // Priority 2: If no language was selected AND we have text, auto-detect it.
+    else if (textContent) {
+      try {
+        const detection = await detectLanguage(textContent);
+        // Use the detected language only if it's reliable and in our supported list.
+        if (detection.isReliable && (SUPPORTED_LANGS as readonly string[]).includes(detection.language)) {
+          userLang = detection.language as LangISO;
+        }
+      } catch (e) {
+        console.warn("Language detection with cld3-wasm failed:", e);
+        // Fallback to the default 'en' if detection fails.
+      }
+    }
+
+    // Finally, normalize to English for AI analysis if the determined language is not English.
     let normalizedText = textContent;
     if (textContent && userLang !== analysisLang) {
       try {
         normalizedText = await translateText(textContent, userLang, analysisLang);
       } catch {
-        normalizedText = textContent; // fallback
+        normalizedText = textContent; // Fallback to original text if translation fails
       }
     }
-
     // Classification (placeholder for now)
     const aiResult = await classifyPlaceholder(normalizedText);
 
