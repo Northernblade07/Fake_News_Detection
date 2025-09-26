@@ -3,14 +3,16 @@
 
 import { ProfileCard } from "@/app/components/ProfileCard";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 export function RightSidebar() {
+  const t = useTranslations("dashboard.sidebar");
   const { data: session, status } = useSession();
 
   if (status === "loading") {
     return (
       <aside className="hidden xl:block w-80 border-l border-brand-border p-6">
-        <p className="text-slate-400">Loading...</p>
+        <p className="text-slate-400">{t("loading")}</p>
       </aside>
     );
   }
@@ -18,7 +20,7 @@ export function RightSidebar() {
   if (!session?.user) {
     return (
       <aside className="hidden xl:block w-80 border-l border-brand-border p-6">
-        <p className="text-slate-400">Not signed in</p>
+        <p className="text-slate-400">{t("notSignedIn")}</p>
       </aside>
     );
   }

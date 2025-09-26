@@ -51,7 +51,17 @@
     "chars": "chars",
     "result": "Result",
     "yourActivity": "Your activity",
-    "metrics": "Metrics"
+    "metrics": "Metrics",
+    "nav": {
+      "dashboard": "Dashboard",
+      "detect": "Detect", 
+      "profile": "Profile",
+      "settings": "Settings"
+    },
+    "sidebar": {
+      "loading": "Loading...",
+      "notSignedIn": "Not signed in"
+    }
   },
   "news": {
     "latest": "Latest news",
@@ -71,8 +81,6 @@
   "footer": {
     "rights": "All rights reserved."
   },
-
-  
   "landing": {
     "hero": {
       "title": "AI-Powered Fake News Detection",
@@ -80,55 +88,54 @@
       "getStarted": "Get Started",
       "learnMore": "Learn More",
       "ctaPrimary": "Get Started",
-    "ctaSecondary": "Learn More"
+      "ctaSecondary": "Learn More"
     },
     "stats": {
       "title": "Our Impact",
-     "analyses": "Articles Analyzed",
-  "sources": "Fake News Detected",
-  "langs": "Languages Supported"
+      "analyses": "Articles Analyzed",
+      "sources": "Fake News Detected",
+      "langs": "Languages Supported"
     },
-  "features": {
-  "heading": "Why Choose SatyaShield?",
-  "subheading": "Built for dependable detections with a modern, scalable pipeline.",
-  "security": {
-    "title": "Secure & Private",
-    "desc": "Your uploaded data is processed securely and never stored permanently."
-  },
-  "multilingual": {
-    "title": "Multilingual Detection",
-    "desc": "End-to-end pipeline across top Indian languages."
-  },
-  "ai": {
-    "title": "AI-First Platform",
-    "desc": "Local models + cloud fallback for confidence and speed."
-  },
-  "text": {
-    "title": "Text & PDFs",
-    "desc": "OCR and parsing for long-form analysis."
-  },
-  "media": {
-    "title": "Images & Video",
-    "desc": "Visual and audio tracks extracted for context."
-  },
-  "audio": {
-    "title": "Audio",
-    "desc": "Speech-to-text and tonal cues where applicable."
-  }
-},
+    "features": {
+      "heading": "Why Choose SatyaShield?",
+      "subheading": "Built for dependable detections with a modern, scalable pipeline.",
+      "security": {
+        "title": "Secure & Private",
+        "desc": "Your uploaded data is processed securely and never stored permanently."
+      },
+      "multilingual": {
+        "title": "Multilingual Detection",
+        "desc": "End-to-end pipeline across top Indian languages."
+      },
+      "ai": {
+        "title": "AI-First Platform",
+        "desc": "Local models + cloud fallback for confidence and speed."
+      },
+      "text": {
+        "title": "Text & PDFs",
+        "desc": "OCR and parsing for long-form analysis."
+      },
+      "media": {
+        "title": "Images & Video",
+        "desc": "Visual and audio tracks extracted for context."
+      },
+      "audio": {
+        "title": "Audio",
+        "desc": "Speech-to-text and tonal cues where applicable."
+      }
+    },
     "news": {
-       "heading": "Latest Verified News",
-  "subheading": "Stay updated with real-time AI-verified stories across the globe.",
-  "details": "View details",
-  "loading": "Fetching the latest news...",
-  "error": "Could not load news. Please try again later."
+      "heading": "Latest Verified News",
+      "subheading": "Stay updated with real-time AI-verified stories across the globe.",
+      "details": "View details",
+      "loading": "Fetching the latest news...",
+      "error": "Could not load news. Please try again later."
     },
     "cta": {
-  "title": "Stay Ahead of Fake News",
-  "subtitle": "Join SatyaShield today and empower yourself to identify misinformation before it spreads.",
-  "primary": "Get Started",
-  "secondary": "Try for Free"
-
+      "title": "Stay Ahead of Fake News",
+      "subtitle": "Join SatyaShield today and empower yourself to identify misinformation before it spreads.",
+      "primary": "Get Started",
+      "secondary": "Try for Free"
     }
   },
   "explore": {
@@ -143,7 +150,9 @@
     },
     "controls": {
       "searchPlaceholder": "Search news...",
-      "apply": "Apply"
+      "apply": "Apply",
+      "prev": "Previous",
+      "next": "Next"
     },
     "buttons": {
       "open": "Open"
@@ -164,20 +173,88 @@
       "popularity": "Popularity"
     },
     "article": {
-      "read": "Read",
-      "analyze": "Analyze",
+      "read": "Read original article",
+      "analyze": "Analyze with AI",
       "unknownSource": "Unknown source"
     },
     "trending": {
-      "title": "Trending today",
-      "none": "No trending items"
+      "title": "Trending Today",
+      "none": "No trending items found"
     },
     "states": {
-      "noResults": "No news found",
-      "loadingMore": "Loading more...",
-      "noMore": "No more results"
+      "noResults": "No news articles found for your criteria.",
+      "fetchError": "Failed to load news. Please try again later.",
+      "page": "Page {page}"
+    }
+  },
+  
+  "detect": {
+    "hero": {
+      "title": "Analyze Content", 
+      "subtitle": "Submit text or upload media to analyze your news content with AI."
+    },
+    "form": {
+      "title": "Detect News",
+      "subtitle": "Paste text or upload a file to analyze content",
+      "inputTypes": {
+        "text": "Text",
+        "file": "File"
+      },
+      "fields": {
+        "title": "Title (optional)",
+        "titlePlaceholder": "Short title",
+        "sourceUrl": "Source URL (optional)", 
+        "sourceUrlPlaceholder": "https://example.com/article",
+        "textContent": "Text content",
+        "textPlaceholder": "Paste the news text here...",
+        "uploadFile": "Upload file",
+        "dragDrop": "Drag & drop or {browse}",
+        "browse": "browse",
+        "fileTypes": "PDF, images, video, or audio",
+        "selected": "Selected: {filename} ({size} KB)",
+        "chars": "{count} chars"
+      },
+      "languages": {
+        "en": "English",
+        "hi": "Hindi", 
+        "bn": "Bengali",
+        "mr": "Marathi",
+        "te": "Telugu",
+        "ta": "Tamil",
+        "gu": "Gujarati",
+        "ur": "Urdu",
+        "kn": "Kannada",
+        "or": "Odia",
+        "ml": "Malayalam",
+        "pa": "Punjabi"
+      },
+      "buttons": {
+        "detect": "Detect",
+        "submitting": "Submitting..."
+      },
+      "errors": {
+        "textRequired": "Text is required",
+        "fileRequired": "File is required", 
+        "fileTooLarge": "File too large (max 25MB)",
+        "detectionFailed": "Detection failed",
+        "unexpectedError": "Unexpected error occurred"
+      }
+    },
+    "result": {
+      "title": "Detection Result",
+      "labels": {
+        "fake": "Fake News",
+        "real": "Real News", 
+        "unknown": "Uncertain"
+      },
+      "confidence": "Confidence: {percent}%",
+      "descriptions": {
+        "fake": "This content appears to contain misinformation",
+        "real": "This content appears to be legitimate news", 
+        "unknown": "Unable to determine authenticity with high confidence"
+      }
     }
   }
+ 
 }
-
 

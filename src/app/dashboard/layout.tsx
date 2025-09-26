@@ -21,7 +21,7 @@ export default function DashboardLayout({
       <main className="flex-1 scrollbar-hide p-6 lg:p-8">
         {children}
       </main>
-      <RightSidebar user={mockUser} />
+      <RightSidebar/>
     </div>
   );
 }

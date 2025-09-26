@@ -4,17 +4,19 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShieldHalf, LayoutGrid, ScanLine, User, Settings } from "lucide-react";
+import { useTranslations } from "next-intl";
 import clsx from 'clsx';
 
-const navItems = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
-  { name: 'Detect', href: '/detect', icon: ScanLine },
-  { name: 'Profile', href: '/dashboard/profile', icon: User },
-  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
-];
-
 export function LeftSidebar() {
+  const t = useTranslations("dashboard.nav");
   const pathname = usePathname();
+  
+  const navItems = [
+    { name: t('dashboard'), href: '/dashboard', icon: LayoutGrid },
+    { name: t('detect'), href: '/detect', icon: ScanLine },
+    { name: t('profile'), href: '/dashboard/profile', icon: User },
+    { name: t('settings'), href: '/dashboard/settings', icon: Settings },
+  ];
   
   return (
     <aside className="hidden lg:flex flex-col w-64 border-r border-brand-border p-6">
@@ -25,7 +27,7 @@ export function LeftSidebar() {
       <nav className="flex flex-col gap-2">
         {navItems.map((item) => (
           <Link
-            key={item.name}
+            key={item.href}
             href={item.href}
             className={clsx(
               "flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors",
@@ -40,9 +42,6 @@ export function LeftSidebar() {
           </Link>
         ))}
       </nav>
-      <div className="mt-auto">
-         {/* You can add something like a logout button here later */}
-      </div>
     </aside>
   );
 }

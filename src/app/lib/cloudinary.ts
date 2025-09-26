@@ -31,8 +31,11 @@ export type CloudinaryUploadResult = {
 
 export type UploadOpts = {
   folder?: string;
-  resource_type?: "image" | "video" | "raw" | "auto"; // allow auto on upload
+  resource_type?: "image" | "video" | "raw" | "auto";
   public_id?: string;
+  use_filename?: boolean;
+  unique_filename?: boolean;
+  filename_override?: string;
 };
 
 export function normalizeResourceType(rt: string): "image" | "video" | "raw" {
@@ -45,11 +48,25 @@ export function uploadBufferToCloudinary(
   buffer: Buffer,
   opts: UploadOpts = {}
 ): Promise<CloudinaryUploadResult> {
-  const { folder = "satyashield/uploads", resource_type = "auto", public_id } = opts;
+  const {
+    folder = "satyashield/uploads",
+    resource_type = "auto",
+    public_id,
+    use_filename,
+    unique_filename,
+    filename_override,
+  } = opts;
 
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder, resource_type, public_id },
+      {
+        folder,
+        resource_type,
+        public_id,
+        use_filename,
+        unique_filename,
+        filename_override,
+      },
       (error, result) => {
         if (error || !result) return reject(error);
         try {

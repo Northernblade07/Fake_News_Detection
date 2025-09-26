@@ -1,4 +1,4 @@
-// app/dashboard/layout.tsx
+// app/detect/layout.tsx
 import { LeftSidebar } from "@/app/components/dashboard/LeftSidebar";
 import { RightSidebar } from "@/app/components/dashboard/RightSidebar";
 import type { UserProfile } from "@/app/types";
@@ -21,7 +21,7 @@ export default function DashboardLayout({
       <main className="flex-1 scrollbar-hide">
         {children}
       </main >
-      <RightSidebar user={mockUser} />
+      <RightSidebar />
     </div>
   );
 }
