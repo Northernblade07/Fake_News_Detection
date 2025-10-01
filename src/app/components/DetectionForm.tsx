@@ -89,13 +89,14 @@ export default function DetectionForm() {
         method: "POST",
         body: fd,
       });
+      console.log(res)
 
       const json: DetectionResponse = await res.json();
 
       if (!res.ok || "error" in json) {
         throw new Error("error" in json ? json.error : t("errors.detectionFailed"));
       }
-
+      console.log(json);
       setResult(json);
     } catch (err) {
       const msg = err instanceof Error ? err.message : t("errors.unexpectedError");

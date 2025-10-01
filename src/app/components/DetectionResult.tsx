@@ -24,6 +24,7 @@ type Props = {
 
 export default function DetectionResult({ result }: Props) {
   const t = useTranslations("detect.result");
+  console.log(result)
   const ref = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
 

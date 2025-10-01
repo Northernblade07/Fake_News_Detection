@@ -85,8 +85,8 @@ export type LocalClassification = {
   scores: Record<Exclude<TriLabel, "unknown">, number>;
 };
 
-const MIN_CONF = 0.75;
-const MARGIN = 0.2;
+const MIN_CONF = 0.65;
+const MARGIN = 0.4;
 
 export async function classifyLocalFakeRealUnknown(text?: string): Promise<LocalClassification> {
   if (!text?.trim()) return { label: "unknown", probability: 0, scores: { fake: 0, real: 0 } };
@@ -111,7 +111,9 @@ export async function classifyLocalFakeRealUnknown(text?: string): Promise<Local
   const [topLabel, topScore] = pairs[0] as [Exclude<TriLabel, "unknown">, number];
   const secondScore = pairs[1]?.[1] ?? 0;
   const confident = topScore >= MIN_CONF && topScore - secondScore >= MARGIN;
-
+    console.log(scores)
+    console.log(pairs)
+    console.log(confident)
   return {
     label: confident ? topLabel : "unknown",
     probability: confident ? topScore : secondScore,

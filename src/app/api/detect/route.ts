@@ -14,11 +14,9 @@ import { validateType, validateText, validateOptionalUrl, readAndValidateFile } 
 import { translateText, type LangISO } from "@/app/lib/ai/translate";
 import { ocrImageBuffer } from "@/app/lib/ai/ocr";
 import { detectLanguage } from "@/app/lib/ai/langDetect";
-
-// New local helpers (ensure these exist)
-import { extractTextFromPdf } from "@/app/lib/pdf/extract";            // pdf.js text + OCR fallback
-import { writeTempFile, extractMono16kWav } from "@/app/lib/ai/ffmpeg"; // ffmpeg → mono 16k WAV
-import { transcribeFile, classifyLocalFakeRealUnknown } from "@/app/lib/ai/transformers-pipeline"; // Whisper + local zero-shot
+import { extractTextFromPdf } from "@/app/lib/pdf/extract";
+import { writeTempFile, extractMono16kWav, readFileBuffer } from "@/app/lib/ai/ffmpeg";
+import { transcribeFile, classifyLocalFakeRealUnknown } from "@/app/lib/ai/transformers-pipeline";
 
 type Classification = { label: "fake" | "real" | "unknown"; probability: number };
 
@@ -33,6 +31,15 @@ const SUPPORTED_LANGS: ReadonlyArray<LangISO> = [
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
+function pickCloudinaryResourceType(mime: string): "image" | "video" | "raw" {
+  if (!mime) return "raw";
+  if (mime.startsWith("image/")) return "image";
+  if (mime === "application/pdf") return "raw"; // PDFs as raw for reliable upload
+  if (mime.startsWith("audio/")) return "video";
+  if (mime.startsWith("video/")) return "video";
+  return "raw";
+}
+
 export async function POST(req: Request) {
   const tmpFiles: string[] = [];
   try {
@@ -44,6 +51,7 @@ export async function POST(req: Request) {
     await connectToDatabase();
 
     const form = await req.formData();
+    console.log(form)
     const type = validateType(form.get("type")?.toString() ?? null);
     const title = form.get("title")?.toString()?.trim() || undefined;
     const sourceUrl = validateOptionalUrl(form.get("sourceUrl")?.toString() ?? null);
@@ -65,56 +73,25 @@ export async function POST(req: Request) {
           return NextResponse.json({ error: `File too large: ${f.name}` }, { status: 400 });
         }
 
-        const { buffer, mime } = await readAndValidateFile(f);
+        // Read once and freeze as originalBuffer
+        const { buffer: originalBuffer, mime } = await readAndValidateFile(f);
+        const resource_type = pickCloudinaryResourceType(mime);
 
-        // 1) Image → OCR (Tesseract.js behind ocrImageBuffer)
-        if (mime.startsWith("image/")) {
-          try {
-            const extractedText = await ocrImageBuffer(buffer);
-            if (extractedText?.trim()) {
-              textContent = (textContent ?? "") + (textContent ? "\n\n" : "") + extractedText.trim();
-            }
-          } catch (e) {
-            console.warn(`OCR failed for ${f.name}:`, e);
-          }
-        }
-        // 2) PDF → pdf.js per-page getTextContent; OCR fallback for low-text pages
-        else if (mime === "application/pdf") {
-          try {
-            const { text } = await extractTextFromPdf(buffer);
-            if (text?.trim()) {
-              textContent = (textContent ?? "") + (textContent ? "\n\n" : "") + text.trim();
-            }
-          } catch (e) {
-            console.warn(`PDF extraction failed for ${f.name}:`, e);
-          }
-        }
-        // 3) Audio/Video → FFmpeg normalize → Whisper ASR (Transformers.js)
-        else if (mime.startsWith("audio/") || mime.startsWith("video/")) {
-          try {
-            const inPath = await writeTempFile("media", mime.split("/")[1] || "bin", buffer);
-            tmpFiles.push(inPath);
-            const wavPath = await extractMono16kWav(inPath);
-            tmpFiles.push(wavPath);
-            const asr = await transcribeFile(wavPath);
-            const transcript = typeof asr?.text === "string" ? asr.text : "";
-            if (transcript?.trim()) {
-              textContent = (textContent ?? "") + (textContent ? "\n\n" : "") + transcript.trim();
-            }
-          } catch (e) {
-            console.warn(`ASR failed for ${f.name}:`, e);
-          }
+        console.log(originalBuffer)
+        console.log(mime)
+        // Upload original first, using the frozen buffer
+        if (!originalBuffer || originalBuffer.byteLength === 0) {
+          return NextResponse.json({ error: "Empty file uploaded" }, { status: 400 });
         }
 
-        // Upload original file for auditability
-        const uploaded = await uploadBufferToCloudinary(buffer, {
+        const uploaded = await uploadBufferToCloudinary(originalBuffer, {
           folder: "satyashield/uploads",
-          resource_type: "auto",
+          resource_type,
           use_filename: true,
           unique_filename: true,
           filename_override: f.name.replace(/\s+/g, "_").slice(0, 200),
         });
-
+          console.log(uploaded)
         media.push({
           url: uploaded.secure_url,
           publicId: uploaded.public_id,
@@ -125,10 +102,71 @@ export async function POST(req: Request) {
           height: uploaded.height,
           duration: uploaded.duration,
         });
+
+        // Then extract text, never mutating originalBuffer
+        if (mime.startsWith("image/")) {
+          try {
+            const extractedText = await ocrImageBuffer(originalBuffer);
+            console.log(extractedText)
+            if (extractedText?.trim()) {
+              textContent = (textContent ?? "") + (textContent ? "\n\n" : "") + extractedText.trim();
+            }
+            console.log(textContent)
+          } catch (e) {
+            console.warn(`OCR failed for ${f.name}:`, e);
+          }
+        } else if (mime === "application/pdf") {
+          try {
+            const { text } = await extractTextFromPdf(originalBuffer);
+            console.log(text,'text')
+            if (text?.trim()) {
+              textContent = (textContent ?? "") + (textContent ? "\n\n" : "") + text.trim();
+              console.log(textContent,"textcontent")
+              }
+          } catch (e) {
+            console.warn(`PDF extraction failed for ${f.name}:`, e);
+          }
+        } else if (mime.startsWith("audio/") || mime.startsWith("video/")) {
+          try {
+            const inPath = await writeTempFile("media", mime.split("/")[1] || "bin", originalBuffer);
+            tmpFiles.push(inPath);
+
+            const wavPath = await extractMono16kWav(inPath);
+            tmpFiles.push(wavPath);
+
+            const wavBuf = await readFileBuffer(wavPath);
+            const wavUpload = await uploadBufferToCloudinary(wavBuf, {
+              folder: "satyashield/uploads",
+              resource_type: "video",
+              use_filename: true,
+              unique_filename: true,
+              filename_override: f.name.replace(/\.[^.]+$/, "") + "_16k.wav",
+            });
+
+            media.push({
+              url: wavUpload.secure_url,
+              publicId: wavUpload.public_id,
+              resourceType: normalizeResourceType(wavUpload.resource_type),
+              format: wavUpload.format,
+              bytes: wavUpload.bytes,
+              width: wavUpload.width,
+              height: wavUpload.height,
+              duration: wavUpload.duration,
+            });
+
+            const asr = await transcribeFile(wavPath);
+            const transcript = typeof asr?.text === "string" ? asr.text : "";
+            if (transcript?.trim()) {
+              textContent = (textContent ?? "") + (textContent ? "\n\n" : "") + transcript.trim();
+            }
+          } catch (e) {
+            console.warn(`ASR failed for ${f.name}:`, e);
+          }
+        }
       }
     }
 
-    // Language normalization for analysis
+    // Language normalization
     const rawLang = form.get("lang")?.toString() ?? null;
     let userLang: LangISO = "en";
     const analysisLang: LangISO = "en";
@@ -155,7 +193,7 @@ export async function POST(req: Request) {
       }
     }
 
-    // Local zero-shot classification via Transformers.js (multilingual NLI), map low confidence to unknown
+    // Local zero-shot classification
     let aiResult: Classification = { label: "unknown", probability: 0 };
     if (normalizedText?.trim()) {
       const out = await classifyLocalFakeRealUnknown(normalizedText);
@@ -167,7 +205,7 @@ export async function POST(req: Request) {
       type,
       title,
       textContent,    // original
-      normalizedText, // translated/cleaned for analysis
+      normalizedText, // translated/cleaned
       media,
       source: { url: sourceUrl },
       result: aiResult,

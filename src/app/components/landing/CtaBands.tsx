@@ -25,6 +25,7 @@ export default function CtaBand() {
       ref={scope}
       className="mt-14 rounded-3xl border border-white/10 bg-[#0e1424]/90 p-10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] backdrop-blur"
     >
+      
       <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
         <div>
           <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight">{t("title")}</h3>

@@ -9,7 +9,7 @@ export default function HomePage() {
   return (
     <main className="flex flex-col items-center w-full bg-[#0b0f1a] text-white">
       {/* Hero Section */}
-      <section className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-12 md:py-2">
+      <section className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-1 md:py-2">
         <Hero />
       </section>
 

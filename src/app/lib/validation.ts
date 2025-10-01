@@ -49,18 +49,24 @@ export async function readAndValidateFile(
   file: File
 ): Promise<{ buffer: Buffer; mime: string }> {
   const mime = file.type || "application/octet-stream";
+  if (!ALLOWED_MIME.has(mime)) throw new Error(`Unsupported file type: ${mime}`);
 
-  if (!ALLOWED_MIME.has(mime)) {
-    throw new Error(`Unsupported file type: ${mime}`);
+  // Fail fast if the browser-reported size is zero
+  if (typeof file.size === "number" && file.size === 0) {
+    throw new Error("Empty file");
   }
 
-  const buf = Buffer.from(await file.arrayBuffer());
+  const arrayBuf = await file.arrayBuffer();
+  if (!arrayBuf || arrayBuf.byteLength === 0) {
+    throw new Error("Empty file");
+  }
 
-  if (buf.byteLength > MAX_FILE_BYTES) {
+  const buffer = Buffer.from(arrayBuf);
+  if (buffer.byteLength > MAX_FILE_BYTES) {
     throw new Error(
       `File too large (max ${Math.round(MAX_FILE_BYTES / (1024 * 1024))} MB)`
     );
   }
-
-  return { buffer: buf, mime };
+    console.log(mime , buffer)
+  return { buffer, mime };
 }
