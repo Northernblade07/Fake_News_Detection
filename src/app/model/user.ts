@@ -16,6 +16,13 @@ export interface IUser extends Document {
   createdAt?: Date;
   updatedAt?: Date;
   role:string;
+  phone?:string;
+  avatar?:string;
+  preference?:{
+    language?:string;
+    emailAlerts?:boolean;
+    theme?:"dark" | "light";
+  }
   comparePassword(candidate: string): Promise<boolean>;
 }
 
@@ -31,6 +38,13 @@ const userSchema = new Schema<IUser>(
       trim: true,
       match: [/^\S+@\S+\.\S+$/, "Invalid email format"],
       index: true,
+    },
+    avatar:{type : String , required : false},
+    phone:{type : String , required:false},
+    preference:{
+      language:{type : String , default :"en"},
+      emailAlerts:{type:Boolean , default : false},
+      theme:{type:String , enum :["dark" , "light"] ,default : "dark"},
     },
     password: {
       type: String,
