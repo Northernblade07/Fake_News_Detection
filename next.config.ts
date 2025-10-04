@@ -33,6 +33,7 @@ const nextConfig: NextConfig = {
       "images.financialexpressdigital.com",
       "api.dicebear.com",
       "lh3.googleusercontent.com",
+      "avatar.iran.liara.run",
     ],
   },
 };

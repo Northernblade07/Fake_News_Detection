@@ -8,7 +8,7 @@ export const labelHint = "text-xs text-slate-400";
 
 export const primaryBtn =
   "inline-flex w-full items-center justify-center gap-2 rounded-lg border-0 " +
-  "bg-gradient-to-r from-sky-400 via-sky-500 to-amber-400 px-5 py-2.5 " +
+  "bg-gradient-to-r from-green-400 via-sky-300 to-amber-800 px-5 py-2.5 " +
   "font-semibold text-[#0b0f1a] shadow-[0_6px_30px_rgba(56,189,248,0.2)] " +
   "transition hover:brightness-110 disabled:opacity-60";
 

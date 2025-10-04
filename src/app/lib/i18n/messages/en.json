@@ -72,12 +72,6 @@
     "unknown": "Unknown",
     "detectNow": "Detect now"
   },
-  "profile": {
-    "title": "Your profile",
-    "info": "Profile info",
-    "activity": "Recent activity",
-    "stats": "Detection stats"
-  },
   "footer": {
     "rights": "All rights reserved."
   },
@@ -254,7 +248,57 @@
         "unknown": "Unable to determine authenticity with high confidence"
       }
     }
+  },
+  "profile": {
+    "title": "Your profile",
+    "info": "Profile info",
+    "activity": "Recent activity",
+    "stats": "Detection stats",
+    "statsLabels": {
+      "total": "Total Detections",
+      "real": "Real",
+      "fake": "Fake"
+    },
+    "form": {
+      "username": "Username",
+      "phoneOptional": "Phone (optional)",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "success": "Profile updated successfully!",
+      "failure": "Failed to update profile"
+    },
+    "notifications": {
+      "title": "Notifications & Preferences",
+      "emailAlerts": "Email alerts on new detections",
+      "language": "Preferred Language",
+      "saving": "Saving..."
+    },
+    "security": {
+      "title": "Account & Security",
+      "change": "Change Password",
+      "hide": "Hide Password Change",
+      "comingSoon": "Password change feature coming soon.",
+      "google": "Google Provider",
+      "github": "GitHub Provider",
+      "linked": "Linked",
+      "notLinked": "Not Linked"
+    },
+    "danger": {
+      "title": "Danger Zone",
+      "delete": "Delete Account",
+      "download": "Download Data",
+      "logout": "Logout",
+      "confirmText": "Are you sure you want to delete your account? This action is irreversible.",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "recent": {
+      "title": "Recent Detections",
+      "empty": "No recent detections found."
+    }
   }
+
+
  
 }
 

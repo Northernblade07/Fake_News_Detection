@@ -1,15 +1,6 @@
 // app/detect/layout.tsx
 import { LeftSidebar } from "@/app/components/dashboard/LeftSidebar";
 import { RightSidebar } from "@/app/components/dashboard/RightSidebar";
-import type { UserProfile } from "@/app/types";
-
-// In a real app, this would be fetched from your authentication context
-const mockUser: UserProfile = {
-  id: 'u_1',
-  name: 'Alex Rivera',
-  email: 'alex.r@satyashield.com',
-};
-
 export default function DashboardLayout({
   children,
 }: {
