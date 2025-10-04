@@ -11,7 +11,6 @@ import User from "@/app/model/user";
 import NewsDetection from "@/app/model/News";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ObjectId } from "mongoose";
-import { signOut } from "next-auth/react";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -19,6 +18,7 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 type UserProfile = {
   _id: string;
   name: string;
+  email:string
   role: string;
   avatar?: string;
   coverPhoto?: string;
@@ -82,32 +82,24 @@ const recentDetectionsTyped: Detection[] = (recentDetectionsRaw as unknown as Ar
 
   const preferences = user?.preferences || {};
 
-   const handleUpdate = async (data: { name: string; phone?: string }) => {
-    await fetch("/api/profile/update", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    // Optionally, you can refresh the page or show a toast
-  };
-
   return (
-    <main className={`${geistSans.variable} ${geistMono.variable} min-h-dvh text-slate-100 bg-gradient-to-r from-sky-400 via-sky-500 to-amber-400`}>
-      <div className="mx-auto max-w-2xl p-6 rounded-2xl shadow-xl bg-[#0b0f1a]/80 backdrop-blur">
+    <main className={`${geistSans.variable} ${geistMono.variable} min-h-dvh text-slate-100 `}>
+      <div className="mx-auto max-w-4xl p-6 shadow-xl bg-[#0b0f1a]/90 backdrop-blur">
         {/* SSR data */}
         <ProfileHeader
           user={{
             avatar: user?.avatar,
             coverPhoto: user?.coverPhoto,
-            name: user?.name,
+            name: user?.name ? user?.name : user?.email.split("@")[0],
             role: user?.role,
+            email:user?.email
           }}
         />
         <ActivityStats stats={{ totalDetections, fakeCount, realCount }} />
         <RecentHistory detections={recentDetectionsTyped} />
 
         {/* API-driven components */}
-        <ProfileForm user={user} onUpdate={handleUpdate}/>
+        <ProfileForm user={user}/>
         <SecurityPanel providers={providers} />
         <NotificationsPanel
   userId={session.user.id}
@@ -115,42 +107,7 @@ const recentDetectionsTyped: Detection[] = (recentDetectionsRaw as unknown as Ar
   locales={["en", "hi", "bn", "mr", "te", "ta", "gu", "ur", "kn", "or", "pa", "ml"]}
 />
 
-<DangerZone
-  onDelete={async () => {
-    try {
-      await fetch("/api/profile/delete", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: session?.user?.id }),
-      });
-      // Log out after deletion
-      await signOut({ redirect: true, callbackUrl: "/" });
-    } catch (err) {
-      console.error("Delete failed", err);
-    }
-  }}
-  onDownload={async () => {
-    try {
-      const res = await fetch("/api/profile/download", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: session?.user?.id }),
-      });
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `account-data-${session?.user?.id}.zip`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error("Download failed", err);
-    }
-  }}
-  onLogout={async () => {
-    await signOut({ redirect: true, callbackUrl: "/" });
-  }}
-/>
+<DangerZone userId={session?.user?.id}/>
 
       </div>
     </main>

@@ -14,12 +14,12 @@ export function LeftSidebar() {
   const navItems = [
     { name: t('dashboard'), href: '/dashboard', icon: LayoutGrid },
     { name: t('detect'), href: '/detect', icon: ScanLine },
-    { name: t('profile'), href: '/dashboard/profile', icon: User },
-    { name: t('settings'), href: '/dashboard/settings', icon: Settings },
+    { name: t('profile'), href: '/profile', icon: User },
+    { name: t('settings'), href: '/settings', icon: Settings },
   ];
   
   return (
-    <aside className="hidden lg:flex flex-col w-64 border-r border-brand-border p-6">
+    <aside className="hidden  lg:flex flex-col w-64 border-r border-brand-border p-6 ">
       <div className="flex items-center gap-3 mb-10">
         <ShieldHalf className="h-8 w-8 text-brand-blue" />
         <h1 className="text-xl font-bold">SatyaShield</h1>

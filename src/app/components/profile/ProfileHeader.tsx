@@ -1,9 +1,12 @@
+// app/profile/components/ProfileHeader.tsx
 "use client";
 
 import { useRef } from "react";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { cardBase } from "../Theme";
+import { useTranslations } from "next-intl"; // + i18n
 
 interface ProfileHeaderProps {
   user: {
@@ -11,53 +14,66 @@ interface ProfileHeaderProps {
     coverPhoto?: string;
     name: string;
     role: string;
+    email: string;
   };
 }
 
 export default function ProfileHeader({ user }: ProfileHeaderProps) {
+  const t = useTranslations("profile"); // + i18n namespace
   const headerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     if (!headerRef.current) return;
     gsap.fromTo(
       headerRef.current,
-      { opacity: 0, scale: 0.85 },
-      { opacity: 1, scale: 1, duration: 1, ease: "power3.out" }
+      { y: 16, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.55, ease: "power2.out" }
     );
   }, []);
 
   return (
     <div
       ref={headerRef}
-      className="relative flex flex-col items-center pt-6 pb-10 rounded-2xl shadow-[0_8px_20px_rgba(255,255,255,0.15)] bg-gradient-to-r from-sky-400 via-sky-500 to-amber-400 text-[#0b0f1a]"
+      className={`${cardBase} relative overflow-hidden border-2 border-l-green-400 border-r-amber-800 border-b-sky-200 border-t-blue-300`}
     >
+      {/* Optional cover */}
       {user.coverPhoto && (
-        <div className="absolute top-0 left-0 w-full h-28 rounded-t-2xl overflow-hidden opacity-70">
+        <div className="mb-6 h-28 w-full overflow-hidden rounded-xl">
           <Image
             src={user.coverPhoto}
-            alt="Cover Photo"
-            fill
-            style={{ objectFit: "cover" }}
+            alt={t("coverAlt")} // + i18n key
+            width={1200}
+            height={160}
+            className="h-28 w-full object-cover opacity-80"
             priority
           />
         </div>
       )}
 
-      <div className="relative w-24 h-24 mt-12">
-        <Image
-          src={user.avatar ?? "/default-avatar.png"}
-          alt="User Avatar"
-          width={96}
-          height={96}
-          className="rounded-full border-4 border-[#0b0f1a] shadow-lg object-cover"
-          priority
-        />
-      </div>
+      <div className="flex flex-col items-center gap-2">
+        <div className="relative h-24 w-24">
+          <Image
+            width={96}
+            height={96}
+            src={`https://avatar.iran.liara.run/username?username=${encodeURI(
+              user?.name || user?.email
+            )}`}
+            alt={user?.name ?? "User"}
+            className="rounded-full object-cover ring-2 ring-sky-400/40"
+            priority
+          />
+        </div>
 
-      <h1 className="mt-4 text-3xl font-extrabold drop-shadow-md">{user.name}</h1>
-      <span className="mt-1 px-3 py-1 rounded-full bg-[#0b0f1a]/90 font-semibold tracking-wide">
-        {user.role}
-      </span>
+        <h1 className="mt-2 text-2xl font-extrabold tracking-tight">{user.name}</h1>
+        <div className="mt-1 flex flex-wrap items-center justify-center gap-2">
+          <span className="rounded-full bg-[#0f1524] px-3 py-1 text-sm font-semibold text-white/90 border border-white/10">
+            {user.role}
+          </span>
+          <span className="rounded-full bg-[#0f1524] px-3 py-1 text-sm font-semibold text-white/90 border border-white/10">
+            {user.email}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
