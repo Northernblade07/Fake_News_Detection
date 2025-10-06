@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.10.0",
+    "@ducanh2912/next-pwa": "^10.2.9",
     "@google/generative-ai": "^0.24.1",
     "@gsap/react": "^2.1.2",
     "@huggingface/transformers": "^3.7.2",
@@ -48,7 +49,8 @@
     "sharp": "^0.34.3",
     "swr": "^2.3.6",
     "tailwind-scrollbar-hide": "^4.0.0",
-    "tesseract.js": "^6.0.1"
+    "tesseract.js": "^6.0.1",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -58,10 +60,12 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/web-push": "^3.6.4",
     "eslint": "^9.35.0",
     "eslint-config-next": "15.5.2",
     "ignore-loader": "^0.1.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "webpack": "^5.102.0"
   }
 }
