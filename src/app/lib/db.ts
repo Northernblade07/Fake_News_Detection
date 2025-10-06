@@ -4,7 +4,7 @@ import mongoose, { Connection } from "mongoose";
 const MONGODB_URL = process.env.MONGODB_URL!;
 
 if (!MONGODB_URL) {
-  throw new Error("❌ Invalid/Missing environment variable: 'MONGODB_URL'");
+  throw new Error("Invalid/Missing environment variable: 'MONGODB_URL'");
 }
 
 // Extend NodeJS global type for cached mongoose connection
@@ -36,9 +36,9 @@ export async function connectToDatabase(): Promise<Connection> {
 
   try {
     cached.conn = await cached.promise;
-    console.log("✅ MongoDB connected");
+    console.log("MongoDB connected");
   } catch (error) {
-    console.error("❌ MongoDB connection error:", error);
+    console.error("MongoDB connection error:", error);
     throw new Error("Check MongoDB connection");
   }
 

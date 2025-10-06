@@ -9,7 +9,6 @@ import { NextIntlClientProvider } from "next-intl";
 // next-intl (no URL prefix; locale comes from cookie via getRequestConfig)
 import { getMessages, getLocale } from "next-intl/server";
 import Providers from "./provider";
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -27,6 +26,7 @@ export const metadata: Metadata = {
   },
   description:
     "AI-Powered Fake News Detection Platform with advanced NLP and AI to identify misinformation in text, video, audio, and images.",
+    manifest:"/manifest.json",
   keywords: [
     "fake news detection",
     "AI news checker",

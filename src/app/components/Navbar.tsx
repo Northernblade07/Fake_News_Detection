@@ -10,8 +10,10 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import LanguageSwitcher from "@/app/components/LanguageSwitcher";
+import PushClient from "../push/PushClient";
 
 gsap.registerPlugin(useGSAP);
+
 
 export default function Navbar() {
   const t = useTranslations("nav");
@@ -139,6 +141,7 @@ export default function Navbar() {
         {/* Desktop actions */}
        <div className="hidden md:flex items-center justify-self-end gap-4">
           <LanguageSwitcher />
+          {session && <PushClient />}
           {status === "loading" ? (
             <p className="text-slate-400 text-sm">Loading...</p>
           ) : session ? (
@@ -238,6 +241,7 @@ export default function Navbar() {
 
           <div className="mt-4 border-t border-white/25 pt-4 space-y-3">
             <LanguageSwitcher />
+            {session && <PushClient />}
             {status === "loading" ? (
               <p className="text-slate-400 text-sm">Loading...</p>
             ) : session ? (
