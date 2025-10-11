@@ -39,8 +39,8 @@ export async function POST(req: NextRequest) {
     const payload = JSON.stringify({
       title: title || 'Notification',
       body: body || 'Hello!',
-      icon: icon || '/icon-192x192.png',
-      badge: badge || '/icon-192x192.png',
+      icon: icon || '/icons-192x192.png',
+      badge: badge || '/icons-192x192.png',
       data: { url: url || '/' },
     });
 

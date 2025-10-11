@@ -73,8 +73,18 @@ export default function PushClient() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-
       setSubscribed(true);
+
+      try {
+  reg.showNotification('Welcome to SatyaShield!', {
+    body: 'Notifications have been enabled for your account.',
+    icon: '/icons-192x192.png',
+    badge: '/icons-192x192.png',
+  });
+} catch(err) {
+  console.warn('Could not show immediate notification', err);
+}
+
     } catch (err) {
       console.error('Subscribe failed:', err);
       alert(`Push subscribe failed:`);

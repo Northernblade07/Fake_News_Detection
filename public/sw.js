@@ -52,12 +52,12 @@ self.addEventListener('push', (event) => {
     data = { title: 'Notification', body: event.data.text() }; // fallback to plain text
   }
 
-  const options = {
-    body: data.body,
-    icon: data.icon || '/icons-192x192.png',
-    badge: data.badge || '/icons-192x192.png',
-    data: data.data || {},
-  };
+ const options = {
+  body: data.body,
+  icon: `${self.location.origin}/icons-192x192.png`,
+  badge: `${self.location.origin}/icons-192x192.png`,
+  data: data.data || {},
+};
 
   event.waitUntil(self.registration.showNotification(data.title || 'Notification', options));
 });
@@ -78,21 +78,18 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 
-    self.addEventListener('pushsubscriptionchange', (event) => {
+self.addEventListener('pushsubscriptionchange', (event) => {
   event.waitUntil((async () => {
-    const VAPID_PUBLIC_KEY = 'BCK7dNgWuP7C5itQviVCvIs8NIV9Ek6T9u6bI6pzgbeFVRniBzA8mSfFHFGOjAy96dfFaDYeZcNovnzVKbMsNek';
-
+    const VAPID_PUBLIC_KEY = 'BNmCYeYu3wd7J9gHUh7gYR74KMVntSM5GM6s9mK29unUyM02KdMDSA38LZvX2Hlus586JSQNbhUYhaZQC0NAiaQ';
     const reg = await self.registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
     });
 
-    // Send new subscription to server
-    const payload = await reg.toJSON();
     await fetch('/api/push/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(reg.toJSON()),
     });
   })());
 });
