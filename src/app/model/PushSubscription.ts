@@ -16,7 +16,7 @@ export interface IPushSubscription extends Document {
 
 const PushSubscriptionSchema = new Schema<IPushSubscription>(
   {
-    userId: { type: Schema.Types.ObjectId, ref: 'User', index: true, required: true },
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     endpoint: { type: String, required: true, unique: true },
     keys: {
       p256dh: { type: String, required: true },
@@ -29,7 +29,7 @@ const PushSubscriptionSchema = new Schema<IPushSubscription>(
 );
 
 // Indexes
-PushSubscriptionSchema.index({ endpoint: 1 }, { unique: true });
+// PushSubscriptionSchema.index({ endpoint: 1 }, { unique: true });
 PushSubscriptionSchema.index({ userId: 1 });
 
 export default mongoose.models.PushSubscription ||
