@@ -1,24 +1,27 @@
 // app/lib/ai/transformers-pipeline.ts
+import path from "path";
 import { pipeline, env } from "@huggingface/transformers";
 
-// Optional offline/local configuration (uncomment and set paths for air-gapped deployments)
-// env.localModelPath = "/absolute/path/to/models"; // place model repos on disk
-// env.allowRemoteModels = true;                    // set false to forbid hub downloads entirely
-// // Optionally pin ONNX WASM binaries locally
-// // @ts-ignore
-// env.backends ??= {};
-// // @ts-ignore
-// env.backends.onnx ??= { wasm: {} };
-// // @ts-ignore
-// env.backends.onnx.wasm.wasmPaths = "/absolute/path/to/wasm";
+// Force local mode (no hub downloads)
+env.allowRemoteModels = false;
+env.localModelPath = path.join(process.cwd(), "models");
 
+// Force Node backend (onnxruntime-node)
+env.backends = {
+  onnx: {
+    // Explicitly prefer onnxruntime-node backend
+    // (transformers.js automatically loads it if available in Node)
+    preferBackend: "onnxruntime-node",
+  },
+};
+
+// === Type definitions ===
 type Task =
   | "text-classification"
   | "feature-extraction"
   | "automatic-speech-recognition"
   | "zero-shot-classification";
 
-// Narrow result types used by helpers
 export type TextClassificationResult = { label: string; score: number };
 export type EmbeddingResult = number[] | number[][];
 export type TranscriptionResult = {
@@ -27,10 +30,11 @@ export type TranscriptionResult = {
 };
 export type ZeroShotResult = { sequence: string; labels: string[]; scores: number[] };
 
-// Generic singleton factory with unknown storage to avoid Pipeline typing issues
+// === Generic typed pipeline loader ===
 function P<T extends Task>(task: T, model: string) {
   return class PipelineSingleton {
     private static instance: unknown | null = null;
+
     static async get(progress_callback?: (d: unknown) => void): Promise<unknown> {
       if (!this.instance) {
         this.instance = await pipeline(task, model, { progress_callback });
@@ -40,24 +44,26 @@ function P<T extends Task>(task: T, model: string) {
   };
 }
 
-// Pipelines (local ONNX-compatible models for Transformers.js)
+// === Base pipelines ===
 const TextClassifier = P("text-classification", "Xenova/distilbert-base-uncased-finetuned-sst-2-english");
-const Embedder      = P("feature-extraction", "Xenova/all-MiniLM-L6-v2");
-const Transcriber   = P("automatic-speech-recognition", "Xenova/whisper-small");
-const ZeroShotClf   = P("zero-shot-classification", "Xenova/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7");
+const Embedder = P("feature-extraction", "Xenova/all-MiniLM-L6-v2");
+const Transcriber = P("automatic-speech-recognition", "Xenova/whisper-small");
+const ZeroShotClf = P("zero-shot-classification", "Xenova/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7");
 
-// Helpers with strict call signatures
+// === Local fake news classifier (ONNX model in /models/fake-news-classifier) ===
+const LocalFakeNewsClassifier = P("text-classification", "fake_news_model");
 
+// === Helper: classify text ===
 export async function classifyText(text: string): Promise<TextClassificationResult[]> {
   const clf = (await TextClassifier.get()) as (input: string) => Promise<TextClassificationResult[]>;
   return clf(text);
 }
 
+// === Helper: embed text ===
 export async function embedText(text: string): Promise<number[]> {
   const emb = (await Embedder.get()) as (input: string) => Promise<EmbeddingResult>;
   const out = await emb(text);
-  // Mean-pool to a single vector if a 2D token-by-dim matrix is returned
-  if (Array.isArray(out) && Array.isArray((out)[0])) {
+  if (Array.isArray(out) && Array.isArray(out[0])) {
     const mat = out as number[][];
     const dim = mat[0]?.length ?? 0;
     const sum = new Array(dim).fill(0);
@@ -67,9 +73,8 @@ export async function embedText(text: string): Promise<number[]> {
   return out as number[];
 }
 
-export async function transcribeFile(
-  pathOrUrl: string | File | Blob
-): Promise<TranscriptionResult> {
+// === Helper: transcribe ===
+export async function transcribeFile(pathOrUrl: string | File | Blob): Promise<TranscriptionResult> {
   const asr = (await Transcriber.get()) as (
     src: string | File | Blob,
     opts?: { return_timestamps?: "word" | "chunk" }
@@ -77,7 +82,7 @@ export async function transcribeFile(
   return asr(pathOrUrl, { return_timestamps: "word" });
 }
 
-// Local zero-shot Fake/Real/Unknown using multilingual NLI
+// === Local zero-shot fallback classifier ===
 export type TriLabel = "fake" | "real" | "unknown";
 export type LocalClassification = {
   label: TriLabel;
@@ -111,12 +116,27 @@ export async function classifyLocalFakeRealUnknown(text?: string): Promise<Local
   const [topLabel, topScore] = pairs[0] as [Exclude<TriLabel, "unknown">, number];
   const secondScore = pairs[1]?.[1] ?? 0;
   const confident = topScore >= MIN_CONF && topScore - secondScore >= MARGIN;
-    console.log(scores)
-    console.log(pairs)
-    console.log(confident)
+
   return {
     label: confident ? topLabel : "unknown",
     probability: confident ? topScore : secondScore,
     scores,
   };
+}
+
+// === Local ONNX Fake News Classification ===
+export async function classifyFakeNews(text: string): Promise<TextClassificationResult[]> {
+  if (!text?.trim()) return [{ label: "unknown", score: 0 }];
+
+  try {
+    const clf = (await LocalFakeNewsClassifier.get()) as (input: string) => Promise<TextClassificationResult[]>;
+    const results = await clf(text);
+    return results.map(r => ({
+      label: r.label.toLowerCase(),
+      score: Number(r.score),
+    }));
+  } catch (err) {
+    console.error("Failed to classify with local ONNX model:", err);
+    return [{ label: "unknown", score: 0 }];
+  }
 }

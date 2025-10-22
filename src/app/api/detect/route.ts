@@ -16,7 +16,7 @@ import { ocrImageBuffer } from "@/app/lib/ai/ocr";
 import { detectLanguage } from "@/app/lib/ai/langDetect";
 import { extractTextFromPdf } from "@/app/lib/pdf/extract";
 import { writeTempFile, extractMono16kWav, readFileBuffer } from "@/app/lib/ai/ffmpeg";
-import { transcribeFile, classifyLocalFakeRealUnknown } from "@/app/lib/ai/transformers-pipeline";
+import { transcribeFile, classifyLocalFakeRealUnknown, classifyFakeNews } from "@/app/lib/ai/transformers-pipeline";
 
 type Classification = { label: "fake" | "real" | "unknown"; probability: number };
 
@@ -196,9 +196,14 @@ export async function POST(req: Request) {
     // Local zero-shot classification
     let aiResult: Classification = { label: "unknown", probability: 0 };
     if (normalizedText?.trim()) {
-      const out = await classifyLocalFakeRealUnknown(normalizedText);
-      aiResult = { label: out.label, probability: out.probability };
-    }
+  const results = await classifyFakeNews(normalizedText);
+  const top = results[0]; // first prediction
+  aiResult = {
+    label: top.label.toLowerCase() as "fake" | "real" | "unknown",
+    probability: top.score,
+  };
+}
+
 
     const userId = toObjectId(String(session.user.id));
     const newsDoc = await NewsDetection.create({

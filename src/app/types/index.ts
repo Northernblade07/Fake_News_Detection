@@ -1,7 +1,12 @@
-// types/index.ts
+// app/types/index.ts
+
+// ---------------------------------------------
+// General types
+// ---------------------------------------------
 export type Verdict = 'fake' | 'real' | 'unknown';
-export type DetectionStatus = 'Real' | 'Fake' | 'Pending' | 'Error';
-export type DetectionType = 'Text' | 'Audio' | 'Video' | 'PDF' | 'URL';
+export type DetectionStatus = 'pending' | 'processing' | 'done' | 'error';
+export type SourceType = 'text' | 'url' | 'file';
+export type FileType = 'image' | 'video' | 'audio' | 'pdf' | 'other';
 
 export interface UserProfile {
   id: string;
@@ -11,36 +16,53 @@ export interface UserProfile {
   plan?: 'free' | 'pro';
 }
 
+// ---------------------------------------------
+// Dashboard statistics (from /api/dashboard/stats)
+// ---------------------------------------------
 export interface DashboardStats {
-  total: number;
-  fake: number;
-  real: number;
-  unknown: number;
-  running: number;
-  pending: number;
+  total: number;        // total detections
+  fake: number;         // number of fake verdicts
+  real: number;         // number of real verdicts
+  unknown: number;      // number of unknown verdicts
+  running: number;      // processing analyses
+  pending: number;      // pending analyses
 }
 
+// ---------------------------------------------
+// Timeseries data for analytics charts
+// ---------------------------------------------
 export interface TimeseriesPoint {
-    date: string; 
-  label?: string; // e.g., S, M, T...
-  count: number;
+  date: string;         // e.g., 'Mon', 'Tue', or full ISO date
+  count: number;        // number of detections
+  label?: string;       // optional shorthand for chart labels
 }
 
+// ---------------------------------------------
+// Detection object returned from NewsDetection model
+// ---------------------------------------------
 export interface Detection {
-  id: string;
-  title: string;
-  type: DetectionType;
-  status: DetectionStatus;
-  date: string;
-  confidence?: number;
+  id: string;                // NewsDetection _id
+  title?: string;            // optional news title
+  type: SourceType;           // 'text' | 'file' | 'url'
+  fileType?: FileType;        // only for file type
+  status: DetectionStatus;    // 'pending' | 'processing' | 'done' | 'error'
+  submittedAt: string;        // createdAt
+  verdict?: Verdict;          // result label
+  confidence?: number;        // result probability
+  hasMedia?: boolean;         // if media exists
 }
 
+// ---------------------------------------------
+// Detection job shown on dashboard recent jobs
+// ---------------------------------------------
 export interface DetectionJob {
-  id: string;
-  sourceType: 'text' | 'url' | 'file';
-  fileType?: 'image' | 'audio' | 'video' | 'pdf' | 'other';
+  id: string;   
+  title:string;
+  textPreview:string           // DetectionLog _id
+  sourceType: SourceType;
+  fileType?: string;
   status: 'completed' | 'running' | 'pending';
-  submittedAt: string;
+  submittedAt: string;        // DetectionLog createdAt
   verdict?: Verdict;
   confidence?: number;
 }
