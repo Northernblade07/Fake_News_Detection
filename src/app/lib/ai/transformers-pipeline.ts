@@ -125,18 +125,45 @@ export async function classifyLocalFakeRealUnknown(text?: string): Promise<Local
 }
 
 // === Local ONNX Fake News Classification ===
+// export async function classifyFakeNews(text: string): Promise<TextClassificationResult[]> {
+//   if (!text?.trim()) return [{ label: "unknown", score: 0 }];
+
+//   try {
+//     const clf = (await LocalFakeNewsClassifier.get()) as (input: string) => Promise<TextClassificationResult[]>;
+//     const results = await clf(text);
+//     return results.map(r => ({
+//       label: r.label.toLowerCase(),
+//       score: Number(r.score),
+//     }));
+//   } catch (err) {
+//     console.error("Failed to classify with local ONNX model:", err);
+//     return [{ label: "unknown", score: 0 }];
+//   }
+// }
+
+//==temporary gemini classification ==
 export async function classifyFakeNews(text: string): Promise<TextClassificationResult[]> {
   if (!text?.trim()) return [{ label: "unknown", score: 0 }];
 
   try {
-    const clf = (await LocalFakeNewsClassifier.get()) as (input: string) => Promise<TextClassificationResult[]>;
-    const results = await clf(text);
-    return results.map(r => ({
-      label: r.label.toLowerCase(),
-      score: Number(r.score),
-    }));
+    // Temporary: Use Gemini instead of local ONNX model
+    const { classifyWithGemini } = await import('./gemini-classifier');
+    const geminiResult = await classifyWithGemini(text);
+    
+    console.log("gemini result" , geminiResult);
+    // Convert Gemini format to your expected format
+    return [{
+      label: geminiResult.label,
+      score: geminiResult.probability
+    }];
+    
   } catch (err) {
-    console.error("Failed to classify with local ONNX model:", err);
-    return [{ label: "unknown", score: 0 }];
+    console.error("Gemini classification failed:", err);
+    // Fallback to your original zero-shot
+    const zeroShotResult = await classifyLocalFakeRealUnknown(text);
+    return [{
+      label: zeroShotResult.label,
+      score: zeroShotResult.probability
+    }];
   }
 }
