@@ -3,7 +3,7 @@
     "name": "सत्यकवच"
   },
   "nav": {
-    "SatyaShield": "सत्यकवच",
+  "SatyaShield": "सत्यशील्ड",
     "home": "होम",
     "explore": "खोजें",
     "dashboard": "डैशबोर्ड",
@@ -72,10 +72,38 @@
     "unknown": "अज्ञात",
     "detectNow": "अभी पहचानें"
   },
- 
+
   "footer": {
-    "rights": "सर्वाधिकार सुरक्षित।"
-  },
+    "SatyaShield": "सत्यशील्ड",
+    "tagline": "एआई-संचालित, बहुभाषी तथ्य-जाँच और सामग्री सत्यापन।",
+    "rights": "सभी अधिकार सुरक्षित।",
+    "cta": { "email": "ईमेल" },
+    "product": {
+      "heading": "उत्पाद",
+      "dashboard": "डैशबोर्ड",
+      "explore": "खोज",
+      "features": "विशेषताएँ",
+      "news": "नवीनतम समाचार"
+    },
+    "resources": {
+      "heading": "संसाधन",
+      "docs": "दस्तावेज़",
+      "guides": "मार्गदर्शिकाएँ",
+      "changelog": "परिवर्तन लॉग"
+    },
+    "company": {
+      "heading": "कंपनी",
+      "about": "परिचय",
+      "contact": "संपर्क",
+      "careers": "करियर"
+    },
+    "legal": {
+      "heading": "कानूनी",
+      "terms": "शर्तें",
+      "privacy": "गोपनीयता"
+    }
+  }
+,
   "landing": {
     "hero": {
       "title": "AI-संचालित फर्जी समाचार पहचान",

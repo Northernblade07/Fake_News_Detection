@@ -3,7 +3,7 @@
     "name": "সত্য کوچ"
   },
   "nav": {
-    "SatyaShield": "সত্য کوچ",
+  "SatyaShield": "ستیہ شیلڈ",
     "home": "ہوم",
     "explore": "تلاش کریں",
     "dashboard": "ڈیش بورڈ",
@@ -123,8 +123,36 @@
   }
 ,
   "footer": {
-    "rights": "جملہ حقوق محفوظ ہیں۔"
-  },
+  "SatyaShield": "ستیہ شیلڈ",
+    "tagline": "اے آئی سے چلنے والی، کثیر اللسانی حقائق کی جانچ اور مواد کی توثیق۔",
+    "rights": "تمام حقوق محفوظ ہیں۔",
+    "cta": { "email": "ای میل" },
+    "product": {
+      "heading": "پروڈکٹ",
+      "dashboard": "ڈیش بورڈ",
+      "explore": "دریافت",
+      "features": "خصوصیات",
+      "news": "تازہ ترین خبریں"
+    },
+    "resources": {
+      "heading": "وسائل",
+      "docs": "دستاویزات",
+      "guides": "رہنما",
+      "changelog": "تبدیلی لاگ"
+    },
+    "company": {
+      "heading": "کمپنی",
+      "about": "تعارف",
+      "contact": "رابطہ",
+      "careers": "ملازمتیں"
+    },
+    "legal": {
+      "heading": "قانونی",
+      "terms": "شرائط",
+      "privacy": "رازداری"
+    }
+  }
+,
   "landing": {
     "hero": {
       "title": "AI سے چلنے والی جعلی خبروں کا پتہ لگانا",

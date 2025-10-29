@@ -46,7 +46,7 @@ export default function RecentHistory({ detections }: RecentHistoryProps) {
   }
 
   return (
-    <section className="mt-12 max-w-5xl mx-auto">
+    <section className="mt-12 max-w-6xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">{t("title")}</h2>
       <div ref={containerRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 [grid-template-columns:repeat(auto-fit,minmax(260px,1fr))]">
         {detections.map(({ _id, title, textContent, result, createdAt }) => (
@@ -55,7 +55,7 @@ export default function RecentHistory({ detections }: RecentHistoryProps) {
             <p className="mt-2 text-slate-300 text-sm">{new Date(createdAt).toLocaleDateString()}</p>
             <span
               className={`mt-3 inline-block rounded-full px-3 py-1 text-sm font-semibold ${
-                result.label === "fake" ? "bg-amber-400/20 text-amber-300" : result.label === "real" ? "bg-emerald-400/20 text-emerald-300" : "bg-slate-400/20 text-slate-300"
+                result.label === "fake" ? "bg-amber-400/5 text-amber-700" : result.label === "real" ? "bg-emerald-400/20 text-emerald-300" : "bg-slate-400/20 text-slate-300"
               }`}
             >
               {result.label.toUpperCase()} ({(result.probability * 100).toFixed(1)}%)

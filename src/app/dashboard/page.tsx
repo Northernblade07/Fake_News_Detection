@@ -48,38 +48,58 @@ export default function DashboardPage() {
   const [jobs, setJobs] = useState<DetectionJob[]>([]);
   const [series, setSeries] = useState<TimeseriesPoint[]>([]);
 
-  useEffect(() => {
-    async function fetchDashboardData() {
-      try {
-        // Fetch stats
-        const statsRes = await fetch('/api/dashboard/stats', { cache: 'no-store' });
-        const statsData: DashboardStats = await statsRes.json();
-        setStats(statsData);
+ useEffect(() => {
+  async function fetchDashboardData() {
+    try {
+      // Fetch stats
+      const statsRes = await fetch('/api/dashboard/stats', { cache: 'no-store' });
+      if (!statsRes.ok) {
+        throw new Error(`Stats API error: ${statsRes.status}`);
+      }
+      const statsData: DashboardStats = await statsRes.json();
+      setStats(statsData);
 
-        // Fetch recent jobs
-        const recentRes = await fetch('/api/dashboard/recent?limit=10', { cache: 'no-store' });
-        console.log(recentRes)
-        const recentJobs: DetectionJob[] = await recentRes.json();
- console.log(recentJobs)
-        setJobs(recentJobs);
+      // Fetch recent jobs
+      const recentRes = await fetch('/api/dashboard/recent?limit=10', { cache: 'no-store' });
+      console.log('Recent jobs response status:', recentRes.status);
+      
+      if (!recentRes.ok) {
+        throw new Error(`Recent jobs API error: ${recentRes.status}`);
+      }
 
-        // Build series for analytics chart
-        const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        const seriesData: TimeseriesPoint[] = weekdays.map((day, idx) => {
-          const count = recentJobs.filter(job => {
+      const recentJobs = await recentRes.json();
+      console.log('Recent jobs data:', recentJobs);
+      console.log('Is array?', Array.isArray(recentJobs));
+
+      // Safely set jobs with fallback to empty array
+      const jobsArray = Array.isArray(recentJobs) ? recentJobs : [];
+      setJobs(jobsArray);
+
+      // Build series for analytics chart with safe array
+      const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const seriesData: TimeseriesPoint[] = weekdays.map((day, idx) => {
+        const count = jobsArray.filter(job => {
+          if (!job?.submittedAt) return false;
+          try {
             const date = new Date(job.submittedAt);
             return date.getDay() === idx;
-          }).length;
-          return { date: day, count };
-        });
-        setSeries(seriesData);
-      } catch (error) {
-        console.error('Dashboard fetch error:', error);
-      }
+          } catch {
+            return false;
+          }
+        }).length;
+        return { date: day, count };
+      });
+      setSeries(seriesData);
+    } catch (error) {
+      console.error('Dashboard fetch error:', error);
+      // Set default empty arrays on error
+      setJobs([]);
+      setSeries([]);
     }
+  }
 
-    fetchDashboardData();
-  }, []);
+  fetchDashboardData();
+}, []);
 
   useGSAP(() => {
     gsap.from('.dashboard-card', {

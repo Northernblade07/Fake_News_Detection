@@ -17,6 +17,8 @@ import { detectLanguage } from "@/app/lib/ai/langDetect";
 import { extractTextFromPdf } from "@/app/lib/pdf/extract";
 import { writeTempFile, extractMono16kWav, readFileBuffer } from "@/app/lib/ai/ffmpeg";
 import { transcribeFile, classifyLocalFakeRealUnknown, classifyFakeNews } from "@/app/lib/ai/transformers-pipeline";
+import PushSubscription from "@/app/model/PushSubscription";
+import { sendPushNotification } from "@/app/lib/push";
 
 type Classification = { label: "fake" | "real" | "unknown"; probability: number };
 
@@ -193,7 +195,7 @@ export async function POST(req: Request) {
       }
     }
 
-    // Local zero-shot classification
+    //classification
     let aiResult: Classification = { label: "unknown", probability: 0 };
     if (normalizedText?.trim()) {
   const results = await classifyFakeNews(normalizedText);
@@ -222,6 +224,22 @@ export async function POST(req: Request) {
       news: newsDoc._id,
       result: aiResult,
     });
+
+
+    try { // consistent with schema
+ // user from session or auth
+  await sendPushNotification(userId, {
+  title: "Detection Completed",
+  body: `The news you submitted was detected as ${aiResult.label.toUpperCase()}.`,
+  icon: "/icons-192x192.png",
+  badge: "/icons-192x192.png",
+  data: { url: "/dashboard/logs" },
+});
+
+} catch (err) {
+  console.error("Push notify error:", err);
+}
+
 
     return NextResponse.json({ news: newsDoc, log: logDoc }, { status: 201 });
   } catch (err) {

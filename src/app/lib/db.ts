@@ -14,7 +14,6 @@ declare global {
     promise: Promise<Connection> | null;
   } | undefined;
 }
-
 const cached = global.mongoose ?? { conn: null, promise: null };
 
 export async function connectToDatabase(): Promise<Connection> {

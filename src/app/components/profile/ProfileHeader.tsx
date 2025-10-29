@@ -34,7 +34,7 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
   return (
     <div
       ref={headerRef}
-      className={`${cardBase} relative overflow-hidden border-2 border-l-green-400 border-r-amber-800 border-b-sky-200 border-t-blue-300`}
+      className={`${cardBase} relative overflow-hidden border-2 border-l-green-200 border-r-amber-500/50 border-b-sky-200 border-t-blue-300 max-w-`}
     >
       {/* Optional cover */}
       {user.coverPhoto && (

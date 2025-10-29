@@ -36,13 +36,13 @@ export default function ActivityStats({ stats }: ActivityStatsProps) {
           <p className="text-sm uppercase tracking-wide text-slate-400">{t("statsLabels.real")}</p>
         </div>
         <div className="text-center">
-          <h3 className="text-4xl font-extrabold bg-gradient-to-r from-sky-400 via-sky-500 to-amber-400 bg-clip-text text-transparent">
+          <h3 className="text-4xl font-extrabold bg-gradient-to-r from-green-400 via-sky-500 to-amber-800 bg-clip-text text-transparent">
             {fmt(stats.totalDetections)}
           </h3>
           <p className="text-sm uppercase tracking-wide text-slate-300">{t("statsLabels.total")}</p>
         </div>
         <div className="text-center">
-          <h3 className="text-4xl font-extrabold text-amber-400">{fmt(stats.fakeCount)}</h3>
+          <h3 className="text-4xl font-extrabold text-amber-800">{fmt(stats.fakeCount)}</h3>
           <p className="text-sm uppercase tracking-wide text-slate-400">{t("statsLabels.fake")}</p>
         </div>
       </div>

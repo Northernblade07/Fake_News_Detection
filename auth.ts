@@ -8,7 +8,15 @@ import bcrypt from "bcryptjs";
 import UserModel, { IUser } from "@/app/model/user";        // ✅ your Mongoose User schema
 import { connectToDatabase } from "@/app/lib/db"; // ✅ MongoDB connection helper
 
+export const runtime = "nodejs";
+
+await connectToDatabase();
+
 const config: NextAuthConfig = {
+  secret: process.env.AUTH_SECRET,
+
+  trustHost: true,
+  
   // Optional: ensure these routes exist
   pages: {
     signIn: "/login",
@@ -54,12 +62,18 @@ const config: NextAuthConfig = {
       },
     }),
 
-    Google,
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID!,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+      allowDangerousEmailAccountLinking: true,
+    }),
     GitHub,
   ],
 
   callbacks: {
     async jwt({ token, user, account, profile }) {
+      console.log("🌀 JWT CALLBACK", { account, profile, token });
+
       // When user logs in via Credentials
       if (user) {
         token.id = user.id;
@@ -72,7 +86,7 @@ const config: NextAuthConfig = {
       if (account && profile) {
         const email = profile?.email?.toString().toLowerCase().trim();
         if (email) {
-          await connectToDatabase();
+          // await connectToDatabase();
           const doc = await UserModel.findOneAndUpdate(
   { email },
   {

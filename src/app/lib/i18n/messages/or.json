@@ -3,7 +3,7 @@
     "name": "ସତ୍ୟକବଚ"
   },
   "nav": {
-    "SatyaShield": "ସତ୍ୟକବଚ",
+  "SatyaShield": "ସତ୍ୟାଶିଲ୍ଡ",
     "home": "ହୋମ୍",
     "explore": "ଅନୁସନ୍ଧାନ",
     "dashboard": "ଡ୍ୟାଶବୋର୍ଡ",
@@ -122,8 +122,36 @@
   }
 ,
   "footer": {
-    "rights": "ସର୍ବସ୍ବତ୍ତ୍ୱ ସଂରକ୍ଷିତ।"
-  },
+      "SatyaShield": "ସତ୍ୟାଶିଲ୍ଡ",
+    "tagline": "AI-ଚାଳିତ, ବହୁଭାଷୀ ତଥ୍ୟ-ପରୀକ୍ଷା ଏବଂ ସାମଗ୍ରୀ ପ୍ରମାଣୀକରଣ।",
+    "rights": "ସମସ୍ତ ଅଧିକାର ସଂରକ୍ଷିତ।",
+    "cta": { "email": "ଇମେଲ୍" },
+    "product": {
+      "heading": "ଉତ୍ପାଦ",
+      "dashboard": "ଡ୍ୟାସ୍ବୋର୍ଡ",
+      "explore": "ଖୋଜ",
+      "features": "ବୈଶିଷ୍ଟ୍ୟ",
+      "news": "ତାଜା ସମାଚାର"
+    },
+    "resources": {
+      "heading": "ସାଧନ",
+      "docs": "ଦଲିଲପତ୍ର",
+      "guides": "ମାର୍ଗଦର୍ଶନ",
+      "changelog": "ପରିବର୍ତ୍ତନ ଲଗ୍"
+    },
+    "company": {
+      "heading": "କମ୍ପାନୀ",
+      "about": "ବିଷୟରେ",
+      "contact": "ସଂପର୍କ",
+      "careers": "ଚାକିରି"
+    },
+    "legal": {
+      "heading": "ଆଇନ",
+      "terms": "ସର୍ତ୍ତ",
+      "privacy": "ଗୁପ୍ତତା"
+    }
+  }
+,
   "landing": {
     "hero": {
       "title": "AI-ଚାଳିତ ମିଥ୍ୟା ଖବର ଚିହ୍ନଟ",

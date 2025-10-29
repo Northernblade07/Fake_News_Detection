@@ -63,4 +63,5 @@ export async function POST(req: Request) {
   if (error) return NextResponse.json({ message: "If the account exists, an email has been sent" });
 
   return NextResponse.json({ message: "If the account exists, an email has been sent" });
+
 }

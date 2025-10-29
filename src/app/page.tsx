@@ -4,6 +4,7 @@ import Features from "./components/landing/Features";
 import StatsStrip from "./components/landing/StatsStrip";
 import LatestNews from "./components/landing/LatestNews";
 import CtaBand from "./components/landing/CtaBands";
+import Footer from "./components/landing/Footer";
 
 export default function HomePage() {
   return (
@@ -31,6 +32,9 @@ export default function HomePage() {
       {/* Call-to-Action Band */}
       <section className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-16">
         <CtaBand />
+      </section>
+      <section className="w-full px-4 sm:px-6 md:px-8 lg:px-10 pt-16">
+        <Footer />
       </section>
     </main>
   );
