@@ -73,7 +73,34 @@
     "detectNow": "Detect now"
   },
   "footer": {
-    "rights": "All rights reserved."
+    "SatyaShield": "SatyaShield",
+    "tagline": "AI-powered, multilingual fact-checking and content verification.",
+    "rights": "All rights reserved.",
+    "cta": { "email": "Email" },
+    "product": {
+      "heading": "Product",
+      "dashboard": "Dashboard",
+      "explore": "Explore",
+      "features": "Features",
+      "news": "Latest news"
+    },
+    "resources": {
+      "heading": "Resources",
+      "docs": "Docs",
+      "guides": "Guides",
+      "changelog": "Changelog"
+    },
+    "company": {
+      "heading": "Company",
+      "about": "About",
+      "contact": "Contact",
+      "careers": "Careers"
+    },
+    "legal": {
+      "heading": "Legal",
+      "terms": "Terms",
+      "privacy": "Privacy"
+    }
   },
   "landing": {
     "hero": {
@@ -202,7 +229,7 @@
         "textContent": "Text content",
         "textPlaceholder": "Paste the news text here...",
         "uploadFile": "Upload file",
-        "dragDrop": "Drag & drop or {browse}",
+        "dragDrop": "Drag & drop",
         "browse": "browse",
         "fileTypes": "PDF, images, video, or audio",
         "selected": "Selected: {filename} ({size} KB)",

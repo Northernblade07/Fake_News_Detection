@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import DetectionResult from "./DetectionResult";
+import { url } from "inspector";
 type DetectType = "text" | "file";
 
 type DetectionSuccess = {
@@ -98,6 +99,16 @@ export default function DetectionForm() {
       }
       console.log(json);
       setResult(json);
+      if ("serviceWorker" in navigator) {
+  const reg = await navigator.serviceWorker.ready;
+  reg.showNotification("Detection Completed", {
+    body: `Your detection is done. See the result `,
+    icon: "/icons-192x192.png",
+    badge: "/icons-192x192.png",
+    data:{url:"/detect"}
+  });
+}
+
     } catch (err) {
       const msg = err instanceof Error ? err.message : t("errors.unexpectedError");
       setError(msg);
@@ -226,7 +237,7 @@ export default function DetectionForm() {
                 <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-sky-400/30 to-amber-400/30 blur-sm" />
                 <p className="text-sm">
                   {t.rich("fields.dragDrop", {
-                    browse: (chunks) => <span className="text-sky-300">{chunks}</span>
+                    browse: (chunks) => <span className="text-sky-300">{chunks} </span>
                   })}
                 </p>
                 <p className="text-xs text-slate-500">{t("fields.fileTypes")}</p>

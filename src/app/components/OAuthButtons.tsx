@@ -1,6 +1,7 @@
 "use client";
 
 import { signIn } from "next-auth/react";
+import { redirect } from "next/navigation";
 import { useState } from "react";
 // import { Github } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
@@ -13,6 +14,7 @@ export default function OAuthButtons() {
     setLoading(provider);
     try {
       await signIn(provider, { callbackUrl: "/" });
+      console.log(provider)
     } finally {
       setLoading(null);
     }

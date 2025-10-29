@@ -3,7 +3,7 @@
     "name": "સત્યકવચ"
   },
   "nav": {
-    "SatyaShield": "સત્યકવચ",
+    "SatyaShield": "સત્યાશીલ્ડ",
     "home": "હોમ",
     "explore": "શોધો",
     "dashboard": "ડેશબોર્ડ",
@@ -123,8 +123,36 @@
   }
 ,
   "footer": {
-    "rights": "સર્વાધિકાર સુરક્ષિત."
-  },
+    "SatyaShield": "સત્યાશીલ્ડ",
+    "tagline": "એઆઇ-આધારિત, બહુભાષી તથ્ય-તપાસ અને સામગ્રી ચકાસણી.",
+    "rights": "બધા અધિકાર સુરક્ષિત.",
+    "cta": { "email": "ઈમેલ" },
+    "product": {
+      "heading": "ઉત્પાદન",
+      "dashboard": "ડેશબોર્ડ",
+      "explore": "ખોજ",
+      "features": "વિશેષતાઓ",
+      "news": "તાજા સમાચાર"
+    },
+    "resources": {
+      "heading": "સ્રોતો",
+      "docs": "દસ્તાવેજો",
+      "guides": "માર્ગદર્શિકા",
+      "changelog": "પરિવર્તન લોગ"
+    },
+    "company": {
+      "heading": "કંપની",
+      "about": "અમારા વિશે",
+      "contact": "સંપર્ક",
+      "careers": "કેરિયર"
+    },
+    "legal": {
+      "heading": "કાયદેસર",
+      "terms": "શરતો",
+      "privacy": "ગોપનીયતા"
+    }
+  }
+,
   "landing": {
     "hero": {
       "title": "AI-આધારિત ખોટા સમાચારની શોધ",

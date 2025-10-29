@@ -5,6 +5,8 @@ export const dynamic = "force-dynamic";
 import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 
+const NEWS_TTL = 180;
+
 type NewsItem = {
   id: string;
   title: string;
@@ -128,7 +130,7 @@ async function fetchNewsAPIPage(
     : `${base}/top-headlines?country=${country}${
         category !== "all" ? `&category=${encodeURIComponent(category)}` : ""
       }&page=${page}&pageSize=${pageSize}&apiKey=${key}`;
-  const res = await fetch(url, { next: { tags: ["news:explore"] } });
+  const res = await fetch(url, { next: { revalidate:NEWS_TTL , tags: ["news:explore"] } });
   const json: NewsAPIResponse = await res.json();
   if (!res.ok || !Array.isArray(json.articles)) return { items: [], hasMore: false };
   const items = json.articles.map(mapNewsAPIItem);
@@ -153,7 +155,7 @@ async function fetchGNewsPage(
   const url = q
     ? `${base}/search?q=${encodeURIComponent(q)}&sortby=${sortBy}&${common}`
     : `${base}/top-headlines?category=${gCategory}&${common}`;
-  const res = await fetch(url, { next: { tags: ["news:explore"] } });
+  const res = await fetch(url, { next: {revalidate:NEWS_TTL , tags: ["news:explore"] } });
   const json: GNewsResponse = await res.json();
   if (!res.ok || !Array.isArray(json.articles)) return { items: [], hasMore: false };
   const items = json.articles.map(mapGNewsItem);
@@ -162,12 +164,13 @@ async function fetchGNewsPage(
 }
 
 async function fetchTrending(lang: string, country: string): Promise<NewsItem[]> {
-  // 1) Try NewsAPI Top Headlines (no q) first
-  const na = await fetchNewsAPIPage("", "all", "publishedAt", 1, 8, lang, country);
-  if (na.items.length > 0) return na.items;
-  // 2) Fallback to GNews Top Headlines if NewsAPI empty or unavailable
-  const gn = await fetchGNewsPage("", "all", 1, 8, lang, country, "publishedAt");
-  return gn.items;
+  // Tag trending separately so you can invalidate it alone
+  const [na, gn] = await Promise.all([
+    fetchNewsAPIPage("", "all", "publishedAt", 1, 8, lang, country),
+    fetchGNewsPage("", "all", 1, 8, lang, country, "publishedAt"),
+  ]);
+  const items = na.items.length > 0 ? na.items : gn.items;
+  return items;
 }
 
 export async function GET(req: Request) {
@@ -181,11 +184,16 @@ export async function GET(req: Request) {
     const lang = searchParams.get("lang") || "en";
     const country = searchParams.get("country") || "in";
 
-    const [{ items: naItems, hasMore: naHasMore }, { items: gnItems, hasMore: gnHasMore }] =
-      await Promise.all([
-        fetchNewsAPIPage(q, category, sortBy, page, pageSize, lang, country),
-        fetchGNewsPage(q, category, page, pageSize, lang, country, mapSortForGNews(sortBy)),
-      ]);
+    const [na, gn, trending] = await Promise.allSettled([
+  fetchNewsAPIPage(q, category, sortBy, page, pageSize, lang, country),
+  fetchGNewsPage(q, category, page, pageSize, lang, country, mapSortForGNews(sortBy)),
+  fetchTrending(lang, country),
+]);
+
+const naItems = na.status === "fulfilled" ? na.value.items : [];
+const gnItems = gn.status === "fulfilled" ? gn.value.items : [];
+const naHasMore = na.status === "fulfilled" && na.value.hasMore;
+const gnHasMore = gn.status === "fulfilled" && gn.value.hasMore;
 
     const merged = dedupe([...naItems, ...gnItems]);
     const articles =
@@ -193,7 +201,7 @@ export async function GET(req: Request) {
         ? [...merged].sort((a, b) => parseDate(b.publishedAt) - parseDate(a.publishedAt))
         : merged;
 
-    const trending = await fetchTrending(lang, country);
+    // const trending = await fetchTrending(lang, country);
 
     const hasMore = naHasMore || gnHasMore;
 

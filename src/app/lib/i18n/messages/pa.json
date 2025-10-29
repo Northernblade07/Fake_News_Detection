@@ -3,7 +3,7 @@
     "name": "ਸਤਿਆਕਵਚ"
   },
   "nav": {
-    "SatyaShield": "ਸਤਿਆਕਵਚ",
+  "SatyaShield": "ਸਤ੍ਯਾਸ਼ੀਲਡ",
     "home": "ਮੁੱਖ ਪੰਨਾ",
     "explore": "ਖੋਜੋ",
     "dashboard": "ਡੈਸ਼ਬੋਰਡ",
@@ -123,8 +123,36 @@
   }
 ,
   "footer": {
-    "rights": "ਸਾਰੇ ਹੱਕ ਰਾਖਵੇਂ ਹਨ।"
-  },
+      "SatyaShield": "ਸਤ੍ਯਾਸ਼ੀਲਡ",
+    "tagline": "ਏ.ਆਈ.-ਆਧਾਰਿਤ, ਬਹੁਭਾਸ਼ੀ ਤੱਥ-ਤਸਦੀਕ ਅਤੇ ਸਮੱਗਰੀ ਦੀ ਜਾਂਚ।",
+    "rights": "ਸਾਰੇ ਅਧਿਕਾਰ ਸੰਰੱਖਿਤ ਹਨ।",
+    "cta": { "email": "ਈਮੇਲ" },
+    "product": {
+      "heading": "ਉਤਪਾਦ",
+      "dashboard": "ਡੈਸ਼ਬੋਰਡ",
+      "explore": "ਖੋਜ",
+      "features": "ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ",
+      "news": "ਤਾਜ਼ਾ ਖ਼ਬਰਾਂ"
+    },
+    "resources": {
+      "heading": "ਸੰਸਾਧਨ",
+      "docs": "ਦਸਤਾਵੇਜ਼",
+      "guides": "ਮਾਰਗਦਰਸ਼ਕ",
+      "changelog": "ਬਦਲਾਅ ਰਿਕਾਰਡ"
+    },
+    "company": {
+      "heading": "ਕੰਪਨੀ",
+      "about": "ਸਾਡੇ ਬਾਰੇ",
+      "contact": "ਸੰਪਰਕ",
+      "careers": "ਰੁਜ਼ਗਾਰ"
+    },
+    "legal": {
+      "heading": "ਕਾਨੂੰਨੀ",
+      "terms": "ਸ਼ਰਤਾਂ",
+      "privacy": "ਗੋਪਨੀਯਤਾ"
+    }
+  }
+,
   "landing": {
     "hero": {
       "title": "AI-ਸੰਚਾਲਿਤ ਜਾਅਲੀ ਖ਼ਬਰਾਂ ਦੀ ਪਛਾਣ",

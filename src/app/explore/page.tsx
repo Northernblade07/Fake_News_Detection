@@ -23,7 +23,8 @@ type Article = {
 
 type ExploreResponse = {
   articles: Article[];
-  trending: Article[];
+  trending: {
+   value: Article[]};
   page: number;
   pageSize: number;
   hasMore: boolean;
@@ -131,10 +132,11 @@ export default function ExplorePage() {
         const json: ExploreResponse = await res.json();
         if (!res.ok) throw new Error("Failed to load news");
 
+        // console.log(json)
         // Soft transition to keep layout stable during swap
         startTransition(() => {
           setItems(json.articles ?? []);
-          setTrending(json.trending ?? []);
+          setTrending(json.trending.value ?? []);
           setHasMore(Boolean(json.hasMore));
           setPage(p);
         });
@@ -305,7 +307,7 @@ export default function ExplorePage() {
                         {t("article.read")}
                       </a>
                       <Link
-                        href={{ pathname: "/dashboard", query: { sourceUrl: a.url, title: a.title } }}
+                        href={{ pathname: "/detect", query: { sourceUrl: a.url, title: a.title } }}
                         className="text-sm text-slate-200 underline-offset-2 hover:underline"
                       >
                         {t("article.analyze")}
@@ -344,7 +346,7 @@ export default function ExplorePage() {
         <section className={sidebarCard}>
           <h2 className="text-sm font-semibold tracking-wide text-slate-200">{t("trending.title")}</h2>
           <div ref={trendScope} className="mt-3 grid gap-2">
-            {trending.map((tItem) => (
+            {trending.length >0 && trending.map((tItem) => (
               <a
                 key={tItem.id}
                 href={tItem.url}

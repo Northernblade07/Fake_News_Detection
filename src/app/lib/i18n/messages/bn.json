@@ -3,7 +3,7 @@
     "name": "SatyaShield"
   },
   "nav": {
-    "SatyaShield": "SatyaShield",
+    "SatyaShield": "সত্যাশিল্ড",
     "home": "হোম",
     "explore": "অন্বেষণ",
     "dashboard": "ড্যাশবোর্ড",
@@ -122,8 +122,38 @@
     }
   },
   "footer": {
-    "rights": "সর্বস্বত্ব সংরক্ষিত।"
-  },
+    "SatyaShield": "SatyaShield",
+    "tagline": "এআই-চালিত, বহুভাষিক তথ্য-যাচাই ও সামগ্রী যাচাইকরণ।",
+    "rights": "সমস্ত অধিকার সংরক্ষিত।",
+    "cta": { "email": "ইমেইল" },
+    "product": {
+      "heading": "পণ্য",
+      "dashboard": "ড্যাশবোর্ড",
+      "explore": "অন্বেষণ",
+      "features": "বৈশিষ্ট্য",
+      "detect": "শনাক্ত করুন",
+      "news": "সর্বশেষ সংবাদ",
+      "profile": "প্রোফাইল"
+    },
+    "resources": {
+      "heading": "সম্পদ",
+      "docs": "ডকুমেন্টেশন",
+      "guides": "গাইড",
+      "changelog": "চেঞ্জলগ"
+    },
+    "company": {
+      "heading": "কোম্পানি",
+      "about": "পরিচিতি",
+      "contact": "যোগাযোগ",
+      "careers": "কর্মসংস্থান"
+    },
+    "legal": {
+      "heading": "আইনী",
+      "terms": "শর্তাবলী",
+      "privacy": "গোপনীয়তা"
+    }
+  }
+,
   "landing": {
     "hero": {
       "title": "AI-চালিত ভুয়ো খবর শনাক্তকরণ",
@@ -250,7 +280,7 @@
         "textContent": "লেখার বিষয়বস্তু",
         "textPlaceholder": "খবরের টেক্সট এখানে পেস্ট করুন...",
         "uploadFile": "ফাইল আপলোড করুন",
-        "dragDrop": "টেনে আনুন বা {browse}",
+        "dragDrop": "টেনে আনুন বা",
         "browse": "ব্রাউজ করুন",
         "fileTypes": "পিডিএফ, ছবি, ভিডিও, বা অডিও",
         "selected": "নির্বাচিত: {filename} ({size} KB)",

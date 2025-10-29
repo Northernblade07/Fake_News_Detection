@@ -2,8 +2,8 @@
   "app": {
     "name": "सत्यकवच"
   },
-  "nav": {
-    "SatyaShield": "सत्यकवच",
+  "nav":{
+  "SatyaShield": "सत्यशील्ड",
     "home": "होम",
     "explore": "शोधा",
     "dashboard": "डॅशबोर्ड",
@@ -122,7 +122,34 @@
   }
 ,
   "footer": {
-    "rights": "सर्व हक्क राखीव।"
+    "SatyaShield": "सत्यशील्ड",
+    "tagline": "एआय-चालित, बहुभाषी तथ्य तपासणी व सामग्री पडताळणी.",
+    "rights": "सर्वाधिकार राखीव.",
+    "cta": { "email": "ईमेल" },
+    "product": {
+      "heading": "उत्पादन",
+      "dashboard": "डॅशबोर्ड",
+      "explore": "शोध",
+      "features": "वैशिष्ट्ये",
+      "news": "नवीनतम बातम्या"
+    },
+    "resources": {
+      "heading": "संसाधने",
+      "docs": "दस्तऐवज",
+      "guides": "मार्गदर्शक",
+      "changelog": "बदल नोंदी"
+    },
+    "company": {
+      "heading": "कंपनी",
+      "about": "परिचय",
+      "contact": "संपर्क",
+      "careers": "करिअर"
+    },
+    "legal": {
+      "heading": "कायदेशीर",
+      "terms": "अटी",
+      "privacy": "गोपनीयता"
+    }
   },
   "landing": {
     "hero": {

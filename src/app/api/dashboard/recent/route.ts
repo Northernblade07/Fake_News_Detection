@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "../../../../../auth";
 import { connectToDatabase } from "@/app/lib/db";
 import DetectionLog, { IDetectionLog } from "@/app/model/detectionlog";
-import { INewsDetection } from "@/app/model/News";
+import NewsDetection, { INewsDetection } from "@/app/model/News";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +23,7 @@ export async function GET(){
         const limit = 10;
         const logs = await DetectionLog.find({user:userId}).populate<{news:INewsDetection}>({
             path:"news",
-            model:"NewsDetection",
+            model:NewsDetection,
             select:"type textContent title status result createdAt"
         }).sort({createdAt:-1}).limit(limit).lean<PopulatedDetectionLog[]>();
 

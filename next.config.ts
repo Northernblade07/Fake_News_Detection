@@ -43,6 +43,7 @@ const nextConfig: NextConfig = {
   images: {
     domains: [
       "assets.upstox.com",
+      "avatars.githubusercontent.com",
       "www.hindustantimes.com",
       "cdn.cnn.com",
       "ichef.bbci.co.uk",

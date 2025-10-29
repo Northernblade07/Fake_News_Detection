@@ -44,7 +44,7 @@ export default async function ProfilePage() {
     .lean()) as UserProfile | null;
 
   if (!user) return <div>Loading...</div>;
-
+const userPlainObject = JSON.parse(JSON.stringify(user));
   // Detection stats
   const totalDetections = await NewsDetection.countDocuments({ user: session.user.id });
   const fakeCount = await NewsDetection.countDocuments({ user: session.user.id, "result.label": "fake" });
@@ -99,7 +99,7 @@ const recentDetectionsTyped: Detection[] = (recentDetectionsRaw as unknown as Ar
         <RecentHistory detections={recentDetectionsTyped} />
 
         {/* API-driven components */}
-        <ProfileForm user={user}/>
+        <ProfileForm user={userPlainObject}/>
         <SecurityPanel providers={providers} />
         <NotificationsPanel
   userId={session.user.id}

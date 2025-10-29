@@ -6,7 +6,12 @@ import Image from "next/image";
 import type { DefaultSession } from "next-auth";
 
 type Props = {
-  user: DefaultSession["user"];
+  user: DefaultSession["user"] & {
+    avatar?: string;
+    coverPhoto?: string;
+    role: string;
+  };
+ 
 };
 
 export function ProfileCard({ user }: Props) {
@@ -19,7 +24,9 @@ export function ProfileCard({ user }: Props) {
             height={56}
             src={
               user?.image ??
-              `https://api.dicebear.com/8.x/initials/svg?seed=${user?.name}`
+              `https://avatar.iran.liara.run/username?username=${encodeURI(
+              user?.name || user?.email
+            )}`
             }
             alt={user?.name ?? "User"}
             className="h-14 w-14 rounded-full object-cover ring-2 ring-brand-blue/50"
