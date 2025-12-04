@@ -306,10 +306,17 @@ export default function ExplorePage() {
                       <a href={a.url} target="_blank" rel="noreferrer" className="text-sky-300 text-sm hover:text-amber-300">
                         {t("article.read")}
                       </a>
-                      <Link
-                        href={{ pathname: "/detect", query: { sourceUrl: a.url, title: a.title } }}
-                        className="text-sm text-slate-200 underline-offset-2 hover:underline"
-                      >
+                     <Link
+  href={{
+    pathname: "/detect",
+    query: {
+      title: encodeURIComponent(a.title || ""),
+      sourceUrl: encodeURIComponent(a.url || ""),
+      description: encodeURIComponent(a.description || ""),
+    },
+  }}
+  className="text-sm text-slate-200 underline-offset-2 hover:underline"
+>
                         {t("article.analyze")}
                       </Link>
                     </div>

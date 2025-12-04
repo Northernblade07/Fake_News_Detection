@@ -3,15 +3,32 @@
 
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import DetectionResult from "./DetectionResult";
-import { url } from "inspector";
+import { useSearchParams } from "next/navigation";
+
 type DetectType = "text" | "file";
 
 type DetectionSuccess = {
   news: { 
     _id: string;
+    title?: string;
+    textContent?: string;
+    normalizedText?: string;
+    type: "text" | "file";
+
+    media: Array<{
+      url: string;
+      publicId: string;
+      resourceType: "image" | "video" | "raw";
+      format?: string;
+      bytes?: number;
+      width?: number;
+      height?: number;
+      duration?: number;
+    }>;
+
     result: {
       label: "fake" | "real" | "unknown";
       probability: number;
@@ -19,6 +36,7 @@ type DetectionSuccess = {
   };
   log: { _id: string };
 };
+
 
 type DetectionError = { error: string };
 type DetectionResponse = DetectionSuccess | DetectionError;
@@ -53,6 +71,20 @@ export default function DetectionForm() {
     { code: "ml", name: t("languages.ml") },
     { code: "pa", name: t("languages.pa") },
   ];
+
+
+  const searchParams = useSearchParams();
+
+useEffect(() => {
+  const titleParam = searchParams.get("title");
+  const sourceParam = searchParams.get("sourceUrl");
+  const descParam = searchParams.get("description");
+
+  if (titleParam) setTitle(decodeURIComponent(titleParam));
+  if (sourceParam) setSourceUrl(decodeURIComponent(sourceParam));
+  if (descParam) setText(decodeURIComponent(descParam));
+}, [searchParams]);
+
 
   useGSAP(() => {
     if (!cardRef.current || !headlineRef.current || !subRef.current) return;
@@ -274,7 +306,7 @@ export default function DetectionForm() {
 
       {/* Result Display */}
       {result && !("error" in result) && (
-        <DetectionResult result={result} />
+        <DetectionResult result={result} userLang={lang}/>
       )}
     </div>
   );

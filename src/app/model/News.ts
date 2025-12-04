@@ -1,6 +1,7 @@
 // models/News.ts
 import mongoose, { Schema, Model, Document } from "mongoose";
 
+
 export interface INewsMedia {
   url: string;
   publicId: string;
@@ -11,6 +12,25 @@ export interface INewsMedia {
   height?: number;
   duration?: number;
 }
+
+export type FactLabel = "fake" | "real" | "unsure";
+
+export interface IFactSource {
+  title?: string;
+  link?: string;
+  snippet?: string;
+}
+
+
+export interface IFactCheck {
+  label: FactLabel;
+  confidence: number;               // 0–1
+  explanation?: string;             // LLM explanation
+  evidenceSummary?: string;         // Summarized evidence
+  sources?: IFactSource[];          // Search results used
+  checkedAt?: Date;                 // Helpful for UI sorting
+}
+
 
 export interface INewsDetection extends Document {
   _id: mongoose.Types.ObjectId;
@@ -29,6 +49,9 @@ export interface INewsDetection extends Document {
     label: "fake" | "real" | "unknown";
     probability: number;
   };
+
+  factCheck?: IFactCheck;
+
   user: mongoose.Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
@@ -63,6 +86,7 @@ const NewsDetectionSchema = new Schema<INewsDetection>(
       domain: String,
       credibilityScore: Number,
     },
+    
 
     result: {
       label: {
@@ -78,6 +102,24 @@ const NewsDetectionSchema = new Schema<INewsDetection>(
       },
     },
 
+      factCheck: {
+      label: { type: String, enum: ["fake", "real", "unsure"], default: "unsure" },
+      confidence: { type: Number, min: 0, max: 1, default: 0 },
+
+      explanation: { type: String },
+      evidenceSummary: { type: String },
+
+      sources: [
+        {
+          title: String,
+          link: String,
+          snippet: String,
+        },
+      ],
+
+      checkedAt: { type: Date, default: null },
+    },
+
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }
@@ -87,6 +129,7 @@ const NewsDetectionSchema = new Schema<INewsDetection>(
 NewsDetectionSchema.index({ user: 1, createdAt: -1 });
 NewsDetectionSchema.index({ "result.label": 1 });
 NewsDetectionSchema.index({ status: 1 });
+NewsDetectionSchema.index({ "factCheck.label": 1 });
 // 🔹 Pre-save hook to sanitize text
 NewsDetectionSchema.pre("save", function (next) {
   if (this.textContent) {

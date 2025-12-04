@@ -29,6 +29,7 @@
     "ffmpeg-static": "^5.2.0",
     "ffprobe-static": "^3.1.0",
     "form-data": "^4.0.4",
+    "groq-sdk": "^0.37.0",
     "gsap": "^3.13.0",
     "lucide-react": "^0.542.0",
     "mongodb": "^6.19.0",
