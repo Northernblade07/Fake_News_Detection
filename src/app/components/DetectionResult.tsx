@@ -6,10 +6,27 @@ import { CheckCircle, XCircle, HelpCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import RelatedNewsButton from "./related/RelatedNewsButton";
 
 type DetectionSuccess = {
   news: { 
     _id: string;
+    title?: string;
+    textContent?: string;
+    normalizedText?: string;
+    type: "text" | "file";
+
+    media: Array<{
+      url: string;
+      publicId: string;
+      resourceType: "image" | "video" | "raw";
+      format?: string;
+      bytes?: number;
+      width?: number;
+      height?: number;
+      duration?: number;
+    }>;
+
     result: {
       label: "fake" | "real" | "unknown";
       probability: number;
@@ -18,11 +35,13 @@ type DetectionSuccess = {
   log: { _id: string };
 };
 
+
 type Props = {
   result: DetectionSuccess;
+  userLang:string;
 };
 
-export default function DetectionResult({ result }: Props) {
+export default function DetectionResult({ result , userLang }: Props) {
   const t = useTranslations("detect.result");
   console.log(result)
   const ref = useRef<HTMLDivElement>(null);
@@ -136,6 +155,18 @@ export default function DetectionResult({ result }: Props) {
           <div className="text-xs text-slate-500">{t("labels.unknown")}</div>
         </div>
       </div>
+
+ {/* Suggested News Button at the BOTTOM */}
+<div className="mt-6">
+  <RelatedNewsButton 
+    summary={result.news.textContent || result.news.normalizedText || ""}
+    title={result.news.title || result.news?.textContent?.slice(0, 80)}
+    lang={userLang}
+    region="in"
+  />
+</div>
+
+
     </div>
   );
 }
