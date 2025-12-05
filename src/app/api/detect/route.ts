@@ -19,6 +19,7 @@ import { writeTempFile, extractMono16kWav, readFileBuffer } from "@/app/lib/ai/f
 import { transcribeFile, classifyLocalFakeRealUnknown, classifyFakeNews } from "@/app/lib/ai/transformers-pipeline";
 import PushSubscription from "@/app/model/PushSubscription";
 import { sendPushNotification } from "@/app/lib/push";
+import { runFactCheck } from "@/app/lib/ai/factCheck";
 
 type Classification = { label: "fake" | "real" | "unknown"; probability: number };
 
@@ -61,6 +62,8 @@ export async function POST(req: Request) {
     let textContent: string | undefined;
     const media: INewsMedia[] = [];
 
+
+    // extract and upload files
     if (type === "text") {
       textContent = validateText(form.get("text")?.toString() ?? null);
     } else {
@@ -196,33 +199,52 @@ export async function POST(req: Request) {
     }
 
     //classification
-    let aiResult: Classification = { label: "unknown", probability: 0 };
-    if (normalizedText?.trim()) {
-  const results = await classifyFakeNews(normalizedText);
-  const top = results[0]; // first prediction
-  aiResult = {
-    label: top.label.toLowerCase() as "fake" | "real" | "unknown",
-    probability: top.score,
-  };
+//     let aiResult: Classification = { label: "unknown", probability: 0 };
+//     if (normalizedText?.trim()) {
+//   const results = await classifyFakeNews(normalizedText);
+//   const top = results[0]; // first prediction
+//   aiResult = {
+//     label: top.label.toLowerCase() as "fake" | "real" | "unknown",
+//     probability: top.score,
+//   };
+// }
+if (!normalizedText || normalizedText.trim().length < 5) {
+  return NextResponse.json(
+    { error: "No readable text found for fact-checking." },
+    { status: 400 }
+  );
 }
-
+ const factResult = await runFactCheck(normalizedText);
 
     const userId = toObjectId(String(session.user.id));
     const newsDoc = await NewsDetection.create({
       type,
       title,
-      textContent,    // original
-      normalizedText, // translated/cleaned
+      textContent,
+      normalizedText,
       media,
       source: { url: sourceUrl },
-      result: aiResult,
+
+      // store minimal RAG result
+      factCheck: {
+        label: factResult.label,
+        confidence: factResult.confidence,
+        explanation: factResult.explanation,
+        checkedAt: new Date(),
+        // summary + sources intentionally NOT saved
+      },
+
       user: userId,
+      status: "done",
     });
 
     const logDoc = await DetectionLog.create({
       user: userId,
       news: newsDoc._id,
-      result: aiResult,
+      result: {
+        label: factResult.label === "unsure" ? "unknown" : factResult.label,
+        probability: factResult.confidence,
+      },
     });
 
 
@@ -230,7 +252,7 @@ export async function POST(req: Request) {
  // user from session or auth
   await sendPushNotification(userId, {
   title: "Detection Completed",
-  body: `The news you submitted was detected as ${aiResult.label.toUpperCase()}.`,
+  body: `The news you submitted was detected as ${factResult.label.toUpperCase()}.`,
   icon: "/icons-192x192.png",
   badge: "/icons-192x192.png",
   data: { url: "/dashboard/logs" },
@@ -241,7 +263,13 @@ export async function POST(req: Request) {
 }
 
 
-    return NextResponse.json({ news: newsDoc, log: logDoc }, { status: 201 });
+    return NextResponse.json({ news: newsDoc, log: logDoc ,  rag: {
+          label: factResult.label,
+          confidence: factResult.confidence,
+          explanation: factResult.explanation,
+          evidenceSummary: factResult.evidenceSummary,
+          sources: factResult.sources,
+        } }, { status: 201 });
   } catch (err) {
     console.error("Detect API Error:", err);
     const message = err instanceof Error ? err.message : "Internal error";

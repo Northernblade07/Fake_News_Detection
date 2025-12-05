@@ -1,206 +1,236 @@
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
+
 import { auth } from "@/../auth";
 import { connectToDatabase } from "@/app/lib/db";
-import NewsDetection from "@/app/model/News";
+import NewsDetection, { IFactCheck, FactLabel } from "@/app/model/News";
 import DetectionLog from "@/app/model/detectionlog";
 
-// You said you have used "groq-sdk" earlier in examples. If you use a different client,
-// change the import accordingly. This code guards for missing key.
 import Groq from "groq-sdk";
 
-type FactLabel = "fake" | "real" | "unsure";
+/* -------------------------------------------------------------------------- */
+/*                               ENV VARIABLES                                */
+/* -------------------------------------------------------------------------- */
 
-const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
-const GOOGLE_KEY = process.env.GOOGLE_SEARCH_API_KEY || "";
-const GOOGLE_CX = process.env.GOOGLE_SEARCH_ENGINE_ID || "";
-const MAX_SOURCES = Number(process.env.FACTCHECK_MAX_SOURCES || 10);
+const GROQ_API_KEY = process.env.GROQ_API_KEY ?? "";
+const APP_BASE_URL = process.env.APP_BASE_URL ?? "http://localhost:3000";
+const FACTCHECK_CACHE_TTL = Number(process.env.FACTCHECK_CACHE_TTL ?? 60 * 60 * 6); // 6 hrs
+const MAX_SOURCES = Number(process.env.FACTCHECK_MAX_SOURCES ?? 6);
 
-// Initialize groq client only if key present
+/* -------------------------------------------------------------------------- */
+/*                                    TYPES                                   */
+/* -------------------------------------------------------------------------- */
+
+interface RelatedArticle {
+  title: string;
+  url: string;
+  snippet: string;
+  source: string | null;
+  publishedAt: string | null;
+}
+
+interface RelatedApiResponse {
+  items: RelatedArticle[];
+  source: string;
+}
+
+interface FactCheckRequestBody {
+  text?: string;
+  newsId?: string;
+}
+
+interface GroqVerdict {
+  label: FactLabel;
+  confidence: number;
+  explanation: string;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                        SAFE DATABASE CACHE UTILITIES                       */
+/* -------------------------------------------------------------------------- */
+
+function db() {
+  const d = mongoose.connection.db;
+  if (!d) throw new Error("MongoDB connection missing");
+  return d;
+}
+
+async function getCachedFact(key: string) {
+  const result = await db()
+    .collection<{ key: string; payload: unknown; expiresAt: Date }>("api_cache")
+    .findOne({ key, expiresAt: { $gt: new Date() } });
+
+  return result ?? null;
+}
+
+async function setCachedFact(key: string, payload: unknown, ttlSeconds: number) {
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + ttlSeconds * 1000);
+
+  await db().collection("api_cache").updateOne(
+    { key },
+    { $set: { payload, expiresAt, updatedAt: now }, $setOnInsert: { createdAt: now } },
+    { upsert: true }
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                 HELPERS                                    */
+/* -------------------------------------------------------------------------- */
+
 const groq = GROQ_API_KEY ? new Groq({ apiKey: GROQ_API_KEY }) : null;
 
-// Safe helper to call Groq chat with retries
-async function groqChatSafe(prompt: string, fallback = ""): Promise<string> {
-  if (!groq) return fallback;
-
+async function groqChat(prompt: string): Promise<string> {
+  if (!groq) return "";
   try {
-    const res = await groq.chat.completions.create({
-      model: "llama3-8b-8192",
+    const out = await groq.chat.completions.create({
+       model: "llama-3.3-70b-versatile",  // ← LATEST 70B (free)
+      // Fallback: "llama-3.1-70b-versatile"
       messages: [{ role: "user", content: prompt }],
-      temperature: 0.15,
-      max_tokens: 800,
+      temperature: 0.05,
+      max_tokens: 1000,
     });
-    return res?.choices?.[0]?.message?.content ?? fallback;
+    return out.choices[0]?.message?.content ?? "";
   } catch (err) {
-    console.error("Groq call failed:", err);
-    return fallback;
+    console.error("Groq failed:", err);
+    return "";
   }
 }
 
-// Google Programmable Search wrapper
-async function googleSearch(query: string) {
-  if (!GOOGLE_KEY || !GOOGLE_CX) return [];
-  const url = `https://www.googleapis.com/customsearch/v1?key=${encodeURIComponent(
-    GOOGLE_KEY
-  )}&cx=${encodeURIComponent(GOOGLE_CX)}&q=${encodeURIComponent(query)}&num=10`;
+async function fetchRelated(text: string): Promise<RelatedArticle[]> {
   try {
-    const r = await fetch(url);
-    if (!r.ok) {
-      const text = await r.text().catch(() => "");
-      console.warn("Google search non-OK:", r.status, text);
-      return [];
-    }
-    const data = await r.json();
-    return (data.items || []).map((it: any) => ({
-      title: it.title,
-      link: it.link,
-      snippet: it.snippet || it.pagemap?.metatags?.[0]?.description || "",
-    })) as Array<{ title?: string; link?: string; snippet?: string }>;
+    const res = await fetch(`${APP_BASE_URL}/api/related`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: text }),
+    });
+
+    if (!res.ok) return [];
+    const json = (await res.json()) as RelatedApiResponse;
+    return json.items.slice(0, MAX_SOURCES);
   } catch (err) {
-    console.error("Google search failed:", err);
+    console.error("related-api error:", err);
     return [];
   }
 }
 
-function safeParseJSON<T = any>(raw: string): T | null {
-  if (!raw) return null;
-  // try to extract a JSON object from raw text
-  const jsonMatch = raw.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
-  if (!jsonMatch) return null;
+function safeJson<T>(input: string): T | null {
+  const m = input.match(/\{[\s\S]*\}/);
+  if (!m) return null;
   try {
-    return JSON.parse(jsonMatch[0]) as T;
-  } catch (err) {
-    try {
-      // last-resort: eval-like (not recommended) - avoid for security
-      return null;
-    } catch {
-      return null;
-    }
+    return JSON.parse(m[0]) as T;
+  } catch {
+    return null;
   }
 }
 
-// API route
+/* -------------------------------------------------------------------------- */
+/*                                ROUTE LOGIC                                  */
+/* -------------------------------------------------------------------------- */
+
 export async function POST(req: Request) {
   try {
     const session = await auth();
-    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session?.user?.id)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     await connectToDatabase();
 
-    const body = await req.json().catch(() => ({}));
-    const text = (body?.text || "").toString().trim();
-    const newsId = body?.newsId;
+    const body = (await req.json()) as FactCheckRequestBody;
+    const text = body.text?.trim() ?? "";
+    const newsId = body.newsId;
 
-    if (!text) return NextResponse.json({ error: "Missing text" }, { status: 400 });
+    if (!text)
+      return NextResponse.json({ error: "Missing text" }, { status: 400 });
 
-    // 1) Generate 3-5 search queries
-    const queriesPrompt = `
-You are given a short claim or news text. Generate 4 concise Google search queries (as JSON array of strings)
-that will help verify or falsify the claim. Output only a JSON array.
-Claim: ${text}
-`;
-    const queriesRaw = await groqChatSafe(queriesPrompt, "");
-    let queries: string[] = [];
-    try {
-      const parsed = safeParseJSON<string[]>(queriesRaw);
-      if (Array.isArray(parsed) && parsed.length) queries = parsed.slice(0, 6);
-    } catch (e) {
-      /* ignore */
-    }
-    if (!queries.length) queries = [text];
+    /* -------------------------- (1) CACHE CHECK -------------------------- */
+    const cacheKey = `factcheck:${text}`;
+    const cached = await getCachedFact(cacheKey);
+if (cached) {
+  const payload = cached.payload as Record<string, unknown>;
+  return NextResponse.json({ cached: true, ...payload }, { status: 200 });
+}
 
-    // 2) Run searches (use your existing Google CSE)
-    const allResults: Array<{ title?: string; link?: string; snippet?: string }> = [];
-    for (const q of queries) {
-      const res = await googleSearch(q);
-      if (res && res.length) {
-        for (const r of res) {
-          allResults.push(r);
-        }
-      }
-      // small delay is optional to be nice to the API
-      await new Promise((r) => setTimeout(r, 150));
-      if (allResults.length >= MAX_SOURCES) break;
+    /* -------------------------- (2) FETCH SOURCES ------------------------ */
+    const relatedArticles = await fetchRelated(text);
+
+    /* -------------------------- (3) SUMMARIZE ---------------------------- */
+    const evidence = relatedArticles
+      .map((a, i) => `${i + 1}. ${a.title} — ${a.snippet}`)
+      .join("\n");
+
+    let evidenceSummary = evidence;
+
+    if (groq) {
+      const prompt = `Summarize the following evidence in 3–5 neutral sentences:\n${evidence}`;
+      const out = await groqChat(prompt);
+      if (out.trim().length > 5) evidenceSummary = out.trim();
     }
 
-    const topResults = allResults.slice(0, MAX_SOURCES);
-
-    // 3) Summarize evidence
-    const summaryPrompt = `
-Summarize the following evidence (use neutral language, 4-6 sentences). Provide a concise summary.
-
-Evidence list:
-${topResults.map((s, i) => `#${i + 1} Title: ${s.title}\nSnippet: ${s.snippet}\nLink: ${s.link}`).join("\n\n")}
-`;
-    const evidenceSummary = (await groqChatSafe(summaryPrompt, "")).trim() || "";
-
-    // 4) Final verdict JSON
-    const verdictPrompt = `
-Given the claim:
-"${text}"
-
-And the evidence summary:
-"${evidenceSummary}"
-
-Classify the claim strictly as one of: "real", "fake", "unsure".
-Return ONLY valid JSON with keys: label, confidence (0.0-1.0), explanation.
-Example:
-{"label":"fake","confidence":0.78,"explanation":"..."}
-`;
-    const verdictRaw = await groqChatSafe(verdictPrompt, "");
-    let verdict = safeParseJSON<{ label?: string; confidence?: number; explanation?: string }>(verdictRaw);
-
-    if (!verdict) {
-      // fallback: simple heuristic if no LLM output
-      verdict = {
-        label: "unsure",
-        confidence: 0.35,
-        explanation: "Could not reliably parse model output",
-      };
-    }
-
-    const label = (verdict.label === "real" || verdict.label === "fake" ? verdict.label : "unsure") as FactLabel;
-    const confidence =
-      typeof verdict.confidence === "number" && !Number.isNaN(verdict.confidence)
-        ? Math.min(Math.max(verdict.confidence, 0), 1)
-        : 0.0;
-    const explanation = verdict.explanation?.toString?.() ?? "";
-
-    // 5) Persist into DB under factCheck
-    const factCheckRecord = {
-      label,
-      confidence,
-      explanation,
-      evidenceSummary,
-      sources: topResults,
-      checkedAt: new Date(),
+    /* -------------------------- (4) VERDICT ------------------------------ */
+    let verdict: GroqVerdict = {
+      label: "unsure",
+      confidence: 0.35,
+      explanation: "Not enough evidence.",
     };
 
-    if (newsId) {
-      try {
-        await NewsDetection.findByIdAndUpdate(newsId, { factCheck: factCheckRecord }, { new: true }).exec();
-        await DetectionLog.create({
-          user: session.user.id,
-          news: newsId,
-          result: { label: label === "real" ? "real" : label === "fake" ? "fake" : "unknown", probability: confidence },
-        });
-      } catch (err) {
-        console.warn("Failed to save fact-check:", err);
-      }
+    if (groq) {
+      const prompt = `
+Given this claim: "${text}"
+And this evidence summary: "${evidenceSummary}"
+
+Return strict JSON:
+{"label":"real|fake|unsure","confidence":0.0-1.0,"explanation":"..."}
+`;
+      const raw = await groqChat(prompt);
+      const parsed = safeJson<GroqVerdict>(raw);
+
+      if (parsed) verdict = parsed;
     }
 
-    // 6) Return
+    /* -------------------------- (5) SAVE TO DB --------------------------- */
+    if (newsId) {
+      const userObjectId = new mongoose.Types.ObjectId(session.user.id);
+
+      await NewsDetection.findByIdAndUpdate(
+        newsId,
+        { factCheck: verdict },
+        { new: true }
+      );
+
+      await DetectionLog.create({
+        user: userObjectId,
+        news: new mongoose.Types.ObjectId(newsId),
+        result: {
+          label:
+            verdict.label === "real"
+              ? "real"
+              : verdict.label === "fake"
+              ? "fake"
+              : "unknown",
+          probability: verdict.confidence,
+        },
+      });
+    }
+
+    /* -------------------------- (6) CACHE ------------------------------- */
+    const payload = {
+      verdict,
+      evidenceSummary,
+      sources: relatedArticles,
+    };
+
+    await setCachedFact(cacheKey, payload, FACTCHECK_CACHE_TTL);
+
+    /* -------------------------- (7) RETURN ------------------------------ */
     return NextResponse.json(
-      {
-        verdict: { label, confidence, explanation },
-        evidenceSummary,
-        sources: topResults,
-      },
+      { cached: false, ...payload },
       { status: 200 }
     );
   } catch (err) {
-    console.error("Fact-check route error:", err);
-    return NextResponse.json({ error: err ?? "Internal error" }, { status: 500 });
+    console.error("Fact-check error:", err);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

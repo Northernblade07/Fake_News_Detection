@@ -33,7 +33,7 @@ export async function classifyWithGemini(text: string): Promise<GeminiClassifica
     Classify the following news text as "fake", "real", or "unknown".
 Format:
 {
-  "label": "fake" | "real" | "unknown",
+  "label": "fake" | "real",
   "probability": 0.0–1.0,
   "reasoning": "brief explanation"
 }
