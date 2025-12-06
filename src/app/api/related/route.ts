@@ -210,7 +210,7 @@ export async function POST(req: Request): Promise<Response> {
       gUrl.searchParams.set("key", GOOGLE_CSE_KEY);
       gUrl.searchParams.set("cx", GOOGLE_CSE_ID);
       gUrl.searchParams.set("q", safeQuery);
-      gUrl.searchParams.set("num", "10");
+      gUrl.searchParams.set("num", "8");
 
       const googleResp = await callGoogle(gUrl);
 

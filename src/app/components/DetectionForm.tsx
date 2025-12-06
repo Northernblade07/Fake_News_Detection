@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import DetectionResult from "./DetectionResult";
 import { useSearchParams } from "next/navigation";
+import { RagResult } from "./FactCheckModal";
 
 type DetectType = "text" | "file";
 
@@ -35,6 +36,7 @@ type DetectionSuccess = {
     };
   };
   log: { _id: string };
+  rag: RagResult
 };
 
 
