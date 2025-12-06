@@ -13,6 +13,7 @@ import { RecentJobs } from '@/app/components/dashboard/RecentDetections';
 
 // Icons
 import { TrendingUp, ShieldAlert, ShieldCheck, HelpCircle, ScanLine } from 'lucide-react';
+import DashboardSkeleton from '../components/ui/DashboardSkeleton';
 
 // Types
 interface DashboardStats {
@@ -111,7 +112,7 @@ export default function DashboardPage() {
     });
   }, { scope: container });
 
-  if (!stats) return <div className="text-slate-400 p-6">Loading dashboard...</div>;
+  if (!stats) return <DashboardSkeleton></DashboardSkeleton>;
 
   return (
     <div ref={container} className="scrollbar-hide">

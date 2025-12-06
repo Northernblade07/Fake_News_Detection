@@ -136,8 +136,12 @@ async function fetchRelatedArticles(query: string): Promise<RelatedArticle[]> {
     body,
   });
 
+  console.log(json , "json")
+
   const items = (json?.items ?? []) as RelatedArticle[];
   // trim & restrict
+
+  console.log(items , "items")
   return items
     .slice(0, MAX_SOURCES)
     .map((s) => ({
@@ -245,6 +249,7 @@ export async function runFactCheck(rawClaim?: string | null): Promise<FactCheckR
   // 1) fetch related articles (bounded & quick)
   const sources = await fetchRelatedArticles(claim);
 
+  
   if (sources.length === 0) {
     return {
       label: "unsure",

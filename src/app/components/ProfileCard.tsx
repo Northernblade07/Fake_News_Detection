@@ -9,7 +9,7 @@ type Props = {
   user: DefaultSession["user"] & {
     avatar?: string;
     coverPhoto?: string;
-    role: string;
+    role?: string;
   };
  
 };
