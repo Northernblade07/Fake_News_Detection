@@ -6,12 +6,15 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 gsap.registerPlugin(useGSAP);
 
 export default function Hero() {
   const t = useTranslations("landing.hero");
   const scope = useRef<HTMLDivElement>(null);
+
+    const { data: session} = useSession();
 
   useGSAP(() => {
     // Respect reduced motion
@@ -70,8 +73,9 @@ export default function Hero() {
             {t("subtitle")}
           </p>
           <div className="mt-8 flex flex-wrap lg:justify-start justify-center gap-4">
+            
             <Link
-              href="/dashboard"
+              href={session?"/dashboard":"/login"}
               className="hero-cta inline-flex items-center rounded-xl bg-gradient-to-r from-green-400 via-sky-200 to-amber-800 px-6 py-3 font-semibold text-[#0b0f1a] shadow-[0_6px_30px_rgba(56,189,248,0.35)] hover:brightness-110 transition"
             >
               {t("ctaPrimary")}

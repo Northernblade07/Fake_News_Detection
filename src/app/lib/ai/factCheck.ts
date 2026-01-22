@@ -227,6 +227,18 @@ async function geminiGenerate(prompt: string, maxOutputTokens = 500): Promise<st
   }
 }
 
+
+function buildSearchQuery(claim: string): string {
+  return claim
+    .replace(/["']/g, "")
+    .replace(/[^\p{L}\p{N}\s]/gu, "")
+    .trim()
+    .split(/\s+/)
+    .slice(0, 10)
+    .join(" ");
+}
+
+
 /* --------------------------- Main runner -------------------------------- */
 
 export async function runFactCheck(rawClaim?: string | null): Promise<FactCheckResult> {
@@ -247,8 +259,8 @@ export async function runFactCheck(rawClaim?: string | null): Promise<FactCheckR
   }
 
   // 1) fetch related articles (bounded & quick)
-  const sources = await fetchRelatedArticles(claim);
-
+const searchQuery = buildSearchQuery(claim);
+const sources = await fetchRelatedArticles(searchQuery);
   
   if (sources.length === 0) {
     return {
@@ -289,7 +301,28 @@ export async function runFactCheck(rawClaim?: string | null): Promise<FactCheckR
   }
 
   // 4) verdict (prefer Groq, fallback Gemini)
-  const verdictPrompt = `Claim: "${claim}"\n\nEvidence summary: "${evidenceSummary}"\n\nReturn ONLY valid JSON like: {"label":"real"|"fake"|"unsure","confidence":0.0-1.0,"explanation":"short reason (1-2 sentences)"}\n`;
+const verdictPrompt = `
+You are a fake new and fact-checking system.
+
+Rules:
+- Focus on the CORE claim, not minor numerical differences.
+- If multiple reliable sources support the main claim, label it "real".
+- Minor differences in numbers or wording do NOT make a claim false.
+- Label "fake" ONLY if credible sources explicitly contradict the claim.
+
+Claim:
+"${claim}?"
+
+Evidence summary:
+"${evidenceSummary}"
+
+Return ONLY valid JSON:
+{
+  "label": "real" | "fake" | "unsure",
+  "confidence": 0.0-1.0,
+  "explanation": "1–2 sentences grounded in the evidence"
+}
+`;
   let modelUsedVerdict: FactCheckResult["modelUsedVerdict"] = "none";
   let rawVerdictText = await groqChat(verdictPrompt, GROQ_MAX_TOKENS_VERDICT);
 

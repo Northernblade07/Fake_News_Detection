@@ -137,7 +137,7 @@ async function callBing(query: string): Promise<BingResponse | null> {
 
   const url = new URL("https://api.bing.microsoft.com/v7.0/news/search");
   url.searchParams.set("q", query);
-  url.searchParams.set("count", "6");
+  url.searchParams.set("count", "7");
 
   const res = await fetch(url.toString(), {
     headers: { "Ocp-Apim-Subscription-Key": BING_API_KEY },

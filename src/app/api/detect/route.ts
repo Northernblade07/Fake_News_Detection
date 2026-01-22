@@ -17,7 +17,6 @@ import { detectLanguage } from "@/app/lib/ai/langDetect";
 import { extractTextFromPdf } from "@/app/lib/pdf/extract";
 import { writeTempFile, extractMono16kWav, readFileBuffer } from "@/app/lib/ai/ffmpeg";
 import { transcribeFile, classifyLocalFakeRealUnknown, classifyFakeNews } from "@/app/lib/ai/transformers-pipeline";
-import PushSubscription from "@/app/model/PushSubscription";
 import { sendPushNotification } from "@/app/lib/push";
 import { runFactCheck } from "@/app/lib/ai/factCheck";
 
