@@ -1,7 +1,7 @@
 // components/dashboard/RightSidebar.tsx
 "use client";
 
-import { ProfileCard } from "@/app/components/ProfileCard";
+import { ProfileCard } from "@/components/ProfileCard";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 

@@ -9,8 +9,8 @@ import { useTranslations } from "next-intl";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import LanguageSwitcher from "@/app/components/LanguageSwitcher";
-import PushClient from "../push/PushClient";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import PushClient from "../app/push/PushClient";
 
 gsap.registerPlugin(useGSAP);
 

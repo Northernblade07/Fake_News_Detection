@@ -3,10 +3,10 @@
 
 import { useEffect, useMemo, useRef, useState, useCallback, useTransition } from "react";
 import Link from "next/link";
-import { Search, SlidersHorizontal, Bookmark, Gauge, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, SlidersHorizontal, Bookmark, Gauge, ChevronLeft, ChevronRight } from "lucide-react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import ExternalImage from "@/app/components/ExternalImage";
+import ExternalImage from "@/components/ExternalImage";
 import { useTranslations, useLocale, useFormatter } from "next-intl";
 
 gsap.registerPlugin(useGSAP);

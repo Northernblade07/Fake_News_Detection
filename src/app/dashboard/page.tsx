@@ -6,14 +6,14 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 
 // Components
-import { StatsCard } from '@/app/components/dashboard/StatCard';
-import { AnalysesLine } from '@/app/components/charts/AnalysisLine';
-import { OutcomeDonut } from '@/app/components/charts/OutcomeDonut';
-import { RecentJobs } from '@/app/components/dashboard/RecentDetections';
+import { StatsCard } from '@/components/dashboard/StatCard';
+import { AnalysesLine } from '@/components/charts/AnalysisLine';
+import { OutcomeDonut } from '@/components/charts/OutcomeDonut';
+import { RecentJobs } from '@/components/dashboard/RecentDetections';
 
 // Icons
 import { TrendingUp, ShieldAlert, ShieldCheck, HelpCircle, ScanLine } from 'lucide-react';
-import DashboardSkeleton from '../components/ui/DashboardSkeleton';
+import DashboardSkeleton from '@/components/ui/DashboardSkeleton';
 
 // Types
 interface DashboardStats {

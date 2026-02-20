@@ -318,7 +318,7 @@ Evidence summary:
 
 Return ONLY valid JSON:
 {
-  "label": "real" | "fake" | "unsure",
+  "label": "real" | "fake",
   "confidence": 0.0-1.0,
   "explanation": "1–2 sentences grounded in the evidence"
 }
@@ -336,13 +336,13 @@ Return ONLY valid JSON:
   const parsed = extractJsonObject<{ label?: string; confidence?: number | string; explanation?: string }>(rawVerdictText ?? "");
 
   let label: VerdictLabel = "unsure";
-  let confidence = 0.35;
+  let confidence = 0.50;
   let explanation = "Insufficient evidence to form a verdict.";
 
   if (parsed && typeof parsed.label === "string" && ["real", "fake", "unsure"].includes(parsed.label)) {
     label = parsed.label as VerdictLabel;
     const confNum = typeof parsed.confidence === "number" ? parsed.confidence : Number(parsed.confidence ?? 0);
-    confidence = Number.isFinite(confNum) ? Math.max(0, Math.min(1, confNum)) : 0.35;
+    confidence = Number.isFinite(confNum) ? Math.max(0, Math.min(1, confNum)) : 0.50;
     explanation = typeof parsed.explanation === "string" && parsed.explanation.trim().length > 0 ? parsed.explanation.trim() : explanation;
   } else {
     // fallback heuristics: if many authoritative sources mention the claim as real, bump confidence a bit

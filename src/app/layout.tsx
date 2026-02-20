@@ -2,8 +2,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import BackgroundFX from "./components/BackgroundFX";
-import Navbar from "./components/Navbar";
+import BackgroundFX from "../components/BackgroundFX";
+import Navbar from "../components/Navbar";
 // app/layout.tsx (fixed imports)
 import { NextIntlClientProvider } from "next-intl";
 // next-intl (no URL prefix; locale comes from cookie via getRequestConfig)
@@ -20,6 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+metadataBase: new URL("http://localhost:3000"), // Change to your actual domain when deployed
   title: {
     default: "SatyaShield",
     template: "%s | SatyaShield",
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
     "SatyaShield",
     "AI-powered fact checker",
   ],
-  authors: [{ name: "Your Name", url: "https://satyashield.com" }],
+  authors: [{ name: "Prashant Bhandari", url: "https://satyashield.com" }],
   creator: "SatyaShield Team",
   publisher: "SatyaShield",
   openGraph: {

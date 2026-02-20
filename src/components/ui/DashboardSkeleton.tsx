@@ -3,8 +3,8 @@
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useRef } from "react";
-import { Skeleton } from "@/app/components/ui/Skeleton";
-import { CardSkeleton } from "@/app/components/ui/CardSkeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { CardSkeleton } from "@/components/ui/CardSkeleton";
 
 export default function DashboardSkeleton() {
   const ref = useRef<HTMLDivElement | null>(null);

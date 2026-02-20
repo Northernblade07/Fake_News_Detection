@@ -1,9 +1,9 @@
 // app/detect/page.tsx
 "use client"
 // import { Uploader } from '@/app/components/detect/Uploader';
-import DetectionForm from '../components/DetectionForm';
+import DetectionForm from '@/components/DetectionForm';
 // import DashboardHero from '../components/DashboardHero'; '../components/DashboardHero';
-import DashboardHero from '../components/DashboardHero';
+import DashboardHero from '@/components/DashboardHero';
 
 export default function DetectPage() {
   return (

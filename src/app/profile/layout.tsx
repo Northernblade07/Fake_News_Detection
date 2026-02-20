@@ -1,6 +1,6 @@
 // app/profile/layout.tsx
-import { LeftSidebar } from "@/app/components/dashboard/LeftSidebar";
-import { RightSidebar } from "@/app/components/dashboard/RightSidebar";
+import { LeftSidebar } from "@/components/dashboard/LeftSidebar";
+import { RightSidebar } from "@/components/dashboard/RightSidebar";
 
 
 export default function DashboardLayout({

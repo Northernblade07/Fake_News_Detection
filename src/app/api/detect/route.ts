@@ -15,10 +15,10 @@ import { translateText, type LangISO } from "@/app/lib/ai/translate";
 import { ocrImageBuffer } from "@/app/lib/ai/ocr";
 import { detectLanguage } from "@/app/lib/ai/langDetect";
 import { extractTextFromPdf } from "@/app/lib/pdf/extract";
-import { writeTempFile, extractMono16kWav, readFileBuffer } from "@/app/lib/ai/ffmpeg";
-import { transcribeFile, classifyLocalFakeRealUnknown, classifyFakeNews } from "@/app/lib/ai/transformers-pipeline";
+import { writeTempFile } from "@/app/lib/ai/ffmpeg";
 import { sendPushNotification } from "@/app/lib/push";
 import { runFactCheck } from "@/app/lib/ai/factCheck";
+import { transcribeMedia } from "@/app/lib/ai/asr";
 
 type Classification = { label: "fake" | "real" | "unknown"; probability: number };
 
@@ -131,39 +131,19 @@ export async function POST(req: Request) {
             console.warn(`PDF extraction failed for ${f.name}:`, e);
           }
         } else if (mime.startsWith("audio/") || mime.startsWith("video/")) {
+          console.log("MEDIA TYPE:", mime);
           try {
-            const inPath = await writeTempFile("media", mime.split("/")[1] || "bin", originalBuffer);
-            tmpFiles.push(inPath);
+             // A. Write to temp disk
+             const inPath = await writeTempFile("media", mime.split("/")[1] || "bin", originalBuffer);
+             tmpFiles.push(inPath); // Add to cleanup list
 
-            const wavPath = await extractMono16kWav(inPath);
-            tmpFiles.push(wavPath);
-
-            const wavBuf = await readFileBuffer(wavPath);
-            const wavUpload = await uploadBufferToCloudinary(wavBuf, {
-              folder: "satyashield/uploads",
-              resource_type: "video",
-              use_filename: true,
-              unique_filename: true,
-              filename_override: f.name.replace(/\.[^.]+$/, "") + "_16k.wav",
-            });
-
-            media.push({
-              url: wavUpload.secure_url,
-              publicId: wavUpload.public_id,
-              resourceType: normalizeResourceType(wavUpload.resource_type),
-              format: wavUpload.format,
-              bytes: wavUpload.bytes,
-              width: wavUpload.width,
-              height: wavUpload.height,
-              duration: wavUpload.duration,
-            });
-
-            const asr = await transcribeFile(wavPath);
-            const transcript = typeof asr?.text === "string" ? asr.text : "";
-            if (transcript?.trim()) {
-              textContent = (textContent ?? "") + (textContent ? "\n\n" : "") + transcript.trim();
-            }
-          } catch (e) {
+             // B. Transcribe (Handles conversion -> Groq internally)
+             const transcript = await transcribeMedia(inPath);
+             
+             if (transcript) {
+               textContent = (textContent ? textContent + "\n\n" : "") + transcript;
+             }
+           } catch (e) {
             console.warn(`ASR failed for ${f.name}:`, e);
           }
         }

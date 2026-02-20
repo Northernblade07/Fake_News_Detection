@@ -163,13 +163,15 @@ export default function FactCheckModal({
       className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[999] p-4"
     >
       <FocusTrap active={open}>
-        <div
-          ref={panelRef}
-          className="relative w-full max-w-4xl rounded-2xl border border-white/10 bg-[#0e1424]/90 
-          p-6 shadow-2xl backdrop-blur-xl overflow-hidden"
-          role="dialog"
-          aria-modal="true"
-        >
+       <div
+  ref={panelRef}
+  className="relative w-full max-w-5xl rounded-2xl border border-white/10 
+             bg-[#0e1424]/90 shadow-2xl backdrop-blur-xl
+             max-h-[90vh] overflow-hidden flex flex-col p-4"
+  role="dialog"
+  aria-modal="true"
+>
+
           {/* CLOSE BTN */}
           <button
             onClick={onClose}
@@ -177,6 +179,7 @@ export default function FactCheckModal({
           >
             ✕
           </button>
+<div className="flex-1 overflow-auto pr-1">
 
           <div className="flex flex-col md:flex-row gap-6">
             {/* LEFT */}
@@ -408,6 +411,7 @@ export default function FactCheckModal({
                 </div>
               </div>
             </aside>
+          </div>
           </div>
         </div>
       </FocusTrap>

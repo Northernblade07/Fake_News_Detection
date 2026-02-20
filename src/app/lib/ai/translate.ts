@@ -1,55 +1,55 @@
 // lib/ai/translate.ts
-import { pipeline } from "@huggingface/transformers";
+import Groq from "groq-sdk";
 
-// FLORES-200 codes for major Indian languages (extend as needed)
-export const FLORES = {
-  en: "eng_Latn",
-  hi: "hin_Deva",
-  bn: "ben_Beng",
-  mr: "mar_Deva",
-  te: "tel_Telu",
-  ta: "tam_Taml",
-  gu: "guj_Gujr",
-  ur: "urd_Arab",
-  kn: "kan_Knda",
-  or: "ory_Orya", // Odia
-  ml: "mal_Mlym",
-  pa: "pan_Guru",
-} as const;
+export const SUPPORTED_LANGS = [
+  "en","hi","bn","mr","te","ta","gu","ur","kn","or","ml","pa"
+] as const;
 
-export type LangISO = keyof typeof FLORES;
+export type LangISO = typeof SUPPORTED_LANGS[number];
 
-type TranslationFn = (
-  text: string,
-  opts: { src_lang: string; tgt_lang: string }
-) => Promise<Array<{ translation_text: string }>>;
-
-let translatePipe: TranslationFn | null = null;
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY!,
+});
 
 /**
- * Load the NLLB model once and reuse it.
- */
-async function getTranslator(): Promise<TranslationFn> {
-  if (!translatePipe) {
-    const t = await pipeline("translation", "Xenova/nllb-200-distilled-600M");
-    translatePipe = t as TranslationFn;
-  }
-  return translatePipe;
-}
-
-/**
- * Translate text between FLORES-compatible languages.
+ * Lightweight LLM-based translation
+ * Uses Groq Llama 70B instead of local NLLB model.
  */
 export async function translateText(
   text: string,
   from: LangISO,
-  to: LangISO
+  to: LangISO | "en"
 ): Promise<string> {
-  const src = FLORES[from];
-  const tgt = FLORES[to];
 
-  const t = await getTranslator();
-  const out = await t(text, { src_lang: src, tgt_lang: tgt });
+  // Skip unnecessary translation
+  if (!text?.trim() || from === to) {
+    return text;
+  }
 
-  return out[0]?.translation_text ?? text;
+  try {
+    const prompt = `
+Translate the following text from ${from} to ${to}.
+Preserve meaning exactly.
+Return ONLY the translated text.
+
+Text:
+${text}
+`;
+
+    const res = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0,
+      max_tokens: 800,
+    });
+
+    const translated =
+      res.choices?.[0]?.message?.content?.trim();
+
+    return translated || text;
+
+  } catch (err) {
+    console.error("Translation failed:", err);
+    return text; // graceful fallback
+  }
 }

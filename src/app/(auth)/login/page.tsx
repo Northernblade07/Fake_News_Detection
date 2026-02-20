@@ -5,8 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { signIn } from "next-auth/react";
 import { toast } from "react-toastify";
-import OAuthButtons from "@/app/components/OAuthButtons";
-import { cardBase, inputBase, labelHint, primaryBtn, linkAccent } from "@/app/components/Theme";
+import OAuthButtons from "@/components/OAuthButtons";
+import { cardBase, inputBase, labelHint, primaryBtn, linkAccent } from "@/components/Theme";
 import gsap from "gsap";
 
 export default function LoginPage() {

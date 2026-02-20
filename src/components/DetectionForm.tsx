@@ -55,6 +55,14 @@ export default function DetectionForm() {
   const [result, setResult] = useState<DetectionResponse | null>(null);
   const [lang, setLang] = useState("en");
   
+  const [isRecording, setIsRecording] = useState(false);
+const [isTranscribing, setIsTranscribing] = useState(false);
+
+const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+const audioChunksRef = useRef<Blob[]>([]);
+
+
+  
   const cardRef = useRef<HTMLFormElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
@@ -156,6 +164,94 @@ useEffect(() => {
     setFile(selectedFile);
   }
 
+
+
+async function toggleRecording() {
+  // Stop recording
+  if (isRecording && mediaRecorderRef.current) {
+    mediaRecorderRef.current.stop();
+    return;
+  }
+
+  if (mediaRecorderRef.current) return;
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+    });
+    console.log(stream)
+    let recorder: MediaRecorder;
+
+    // Safari-safe constructor
+    try {
+      recorder = new MediaRecorder(stream, {
+        mimeType: "audio/webm;codecs=opus",
+      });
+    } catch {
+      recorder = new MediaRecorder(stream);
+    }
+
+    mediaRecorderRef.current = recorder;
+    audioChunksRef.current = [];
+
+    recorder.ondataavailable = (e: BlobEvent) => {
+      if (e.data.size > 0) {
+        audioChunksRef.current.push(e.data);
+      }
+    };
+
+    recorder.onstop = async () => {
+      setIsRecording(false);
+      setIsTranscribing(true);
+
+      const audioBlob = new Blob(audioChunksRef.current, {
+        type: "audio/webm",
+      });
+
+      // stop mic indicator
+      stream.getTracks().forEach((t) => t.stop());
+
+      mediaRecorderRef.current = null;
+      audioChunksRef.current = [];
+
+      const fd = new FormData();
+      fd.append("audio", audioBlob,"mic.webm");
+
+      try {
+        const res = await fetch("/api/transcribe", {
+          method: "POST",
+          body: fd,
+        });
+
+        const data: { text?: string } = await res.json();
+        console.log(res)
+        console.log(data)
+        if (data.text) {
+         setText((prev) =>
+  prev
+    ? `${prev} ${data.text ?? ""}`.trim()
+    : (data.text ?? "")
+);
+        }
+
+        console.log(text)
+      } catch (err) {
+        console.error(err);
+        alert("Transcription failed");
+      } finally {
+        setIsTranscribing(false);
+      }
+    };
+
+    recorder.start();
+    setIsRecording(true);
+
+  } catch (err) {
+    console.error(err);
+    alert("Microphone permission required.");
+  }
+}
+
   return (
     <div>
       <form
@@ -250,9 +346,30 @@ useEffect(() => {
               placeholder={t("fields.textPlaceholder")}
               required
             />
-            <span className="text-[11px] text-slate-500">
-              {t("fields.chars", { count: text.length })}
-            </span>
+          <div className="flex items-center justify-between mt-2">
+  <button
+    type="button"
+    onClick={toggleRecording}
+    disabled={busy || isTranscribing}
+    className={`text-xs px-4 py-2 rounded-lg font-medium transition ${
+      isRecording
+        ? "bg-red-500/20 text-red-400 animate-pulse"
+        : isTranscribing
+        ? "bg-amber-500/20 text-amber-300 cursor-wait"
+        : "bg-sky-500/20 text-sky-300 hover:bg-sky-500/30"
+    }`}
+  >
+    {isRecording
+      ? "⏹ Stop Recording"
+      : isTranscribing
+      ? "⏳ Transcribing..."
+      : "🎤 Speak"}
+  </button>
+
+  <span className="text-[11px] text-slate-500">
+    {t("fields.chars", { count: text.length })}
+  </span>
+</div>
           </label>
         ) : (
           <label className="mt-5 grid gap-2">

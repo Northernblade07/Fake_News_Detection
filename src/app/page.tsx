@@ -1,10 +1,10 @@
 // app/page.tsx
-import Hero from "./components/landing/Hero";
-import Features from "./components/landing/Features";
-import StatsStrip from "./components/landing/StatsStrip";
-import LatestNews from "./components/landing/LatestNews";
-import CtaBand from "./components/landing/CtaBands";
-import Footer from "./components/landing/Footer";
+import Hero from "../components/landing/Hero";
+import Features from "../components/landing/Features";
+import StatsStrip from "../components/landing/StatsStrip";
+import LatestNews from "../components/landing/LatestNews";
+import CtaBand from "../components/landing/CtaBands";
+import Footer from "../components/landing/Footer";
 
 export default function HomePage() {
   return (

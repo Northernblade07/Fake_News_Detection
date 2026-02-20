@@ -47,11 +47,7 @@ function P<T extends Task>(task: T, model: string) {
 // === Base pipelines ===
 const TextClassifier = P("text-classification", "Xenova/distilbert-base-uncased-finetuned-sst-2-english");
 const Embedder = P("feature-extraction", "Xenova/all-MiniLM-L6-v2");
-const Transcriber = P("automatic-speech-recognition", "Xenova/whisper-small");
 const ZeroShotClf = P("zero-shot-classification", "Xenova/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7");
-
-// === Local fake news classifier (ONNX model in /models/fake-news-classifier) ===
-const LocalFakeNewsClassifier = P("text-classification", "fake_news_model");
 
 // === Helper: classify text ===
 export async function classifyText(text: string): Promise<TextClassificationResult[]> {

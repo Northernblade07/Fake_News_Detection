@@ -23,7 +23,12 @@ export async function detectLanguage(text: string): Promise<LangDetectResponse> 
 
   const trimmed = text.trim();
   if (trimmed.length < 3) {
-    throw new Error("Text too short for reliable detection");
+    return {
+  language: "en",
+  probability: 0,
+  isReliable: false,
+};
+
   }
 
   const r = identifier.findLanguage(trimmed); // method exists on LanguageIdentifier [web:35][web:39]

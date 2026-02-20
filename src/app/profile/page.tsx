@@ -1,10 +1,10 @@
-import ProfileHeader from "../components/profile/ProfileHeader";
-import ProfileForm from "../components/profile/ProfileForm";
-import SecurityPanel from "../components/profile/SecurityPanel";
-import NotificationsPanel from "../components/profile/NotificationsPanel";
-import ActivityStats from "../components/profile/ActivityStats";
-import RecentHistory, { Detection } from "../components/profile/RecentHistory";
-import DangerZone from "../components/profile/DangerZone";
+import ProfileHeader from "@/components/profile/ProfileHeader";
+import ProfileForm from "@/components/profile/ProfileForm";
+import SecurityPanel from "@/components/profile/SecurityPanel";
+import NotificationsPanel from "@/components/profile/NotificationsPanel";
+import ActivityStats from "@/components/profile/ActivityStats";
+import RecentHistory, { Detection } from "@/components/profile/RecentHistory";
+import DangerZone from "@/components/profile/DangerZone";
 import { auth } from "../../../auth";
 import { connectToDatabase } from "../lib/db";
 import User from "@/app/model/user";
