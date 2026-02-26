@@ -136,12 +136,12 @@ async function fetchRelatedArticles(query: string): Promise<RelatedArticle[]> {
     body,
   });
 
-  console.log(json , "json")
+  // console.log(json , "json")
 
   const items = (json?.items ?? []) as RelatedArticle[];
   // trim & restrict
 
-  console.log(items , "items")
+  // console.log(items , "items")
   return items
     .slice(0, MAX_SOURCES)
     .map((s) => ({
@@ -308,7 +308,9 @@ Rules:
 - Focus on the CORE claim, not minor numerical differences.
 - If multiple reliable sources support the main claim, label it "real".
 - Minor differences in numbers or wording do NOT make a claim false.
-- Label "fake" ONLY if credible sources explicitly contradict the claim.
+- Label "fake" ONLY if sources explicitly contradict the claim.
+Important:
+Lack of confirmation DOES NOT mean false.
 
 Claim:
 "${claim}?"
