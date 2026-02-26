@@ -31,20 +31,64 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-self.addEventListener('fetch', (event) => {
-  const url = new URL(event.request.url);
-  if (url.pathname.startsWith('/api/auth/')) return; // ✅ skip auth calls
+// self.addEventListener('fetch', (event) => {
+//   const url = new URL(event.request.url);
+//   if (url.pathname.startsWith('/api/auth/')) return; // ✅ skip auth calls
+//   if (event.request.method !== 'GET') return;
 
-  if (event.request.method !== 'GET') return;
+//   event.respondWith(
+//     fetch(event.request).catch(async () => {
+//       const cache = await caches.open(APP_CACHE);
+//       const cached = await cache.match(event.request);
+//       return cached || cache.match('/offline.html');
+//     })
+//   );
+// });
+
+
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  const url = new URL(req.url);
+
+  // Skip auth & non-GET
+  if (req.method !== 'GET' || url.pathname.startsWith('/api/auth/')) {
+    return;
+  }
+
+  /* ---------- NEXT STATIC ASSETS ---------- */
+  if (
+    url.pathname.startsWith('/_next/static/') ||
+    req.destination === 'style' ||
+    req.destination === 'script'
+  ) {
+    // Cache-first strategy
+    event.respondWith(
+      caches.match(req).then((cached) => {
+        if (cached) return cached;
+
+        return fetch(req).then((res) => {
+          const clone = res.clone();
+          caches.open(APP_CACHE).then((cache) => cache.put(req, clone));
+          return res;
+        });
+      })
+    );
+    return;
+  }
+
+  /* ---------- NAVIGATION (HTML) ---------- */
+  if (req.mode === 'navigate') {
+    event.respondWith(
+      fetch(req).catch(() => caches.match('/offline.html'))
+    );
+    return;
+  }
+
+  /* ---------- DEFAULT ---------- */
   event.respondWith(
-    fetch(event.request).catch(async () => {
-      const cache = await caches.open(APP_CACHE);
-      const cached = await cache.match(event.request);
-      return cached || cache.match('/offline.html');
-    })
+    fetch(req).catch(() => caches.match(req))
   );
 });
-
 
 self.addEventListener('push', (event) => {
   if (!event.data) return;
