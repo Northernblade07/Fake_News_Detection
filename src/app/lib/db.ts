@@ -1,12 +1,6 @@
 // lib/db.ts
 import mongoose, { Connection } from "mongoose";
 
-const MONGODB_URL = process.env.MONGODB_URL!;
-
-if (!MONGODB_URL) {
-  throw new Error("Invalid/Missing environment variable: 'MONGODB_URL'");
-}
-
 // Extend NodeJS global type for cached mongoose connection
 declare global {
   var mongoose: {
@@ -17,6 +11,12 @@ declare global {
 const cached = global.mongoose ?? { conn: null, promise: null };
 
 export async function connectToDatabase(): Promise<Connection> {
+  const MONGODB_URL = process.env.MONGODB_URL;
+
+if (!MONGODB_URL) {
+  throw new Error("Invalid/Missing environment variable: 'MONGODB_URL'");
+}
+
   if (cached.conn) {
     return cached.conn;
   }
