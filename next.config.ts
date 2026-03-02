@@ -11,7 +11,10 @@ const nextConfig: NextConfig = {
     "ffmpeg-static",
     "ffprobe-static",
     "sharp",
-    "tesseract.js"
+    "tesseract.js",
+    "@napi-rs/canvas",
+  "@napi-rs/canvas-linux-x64-gnu",
+  "@napi-rs/canvas-linux-x64-musl",
   ],
   typescript:{
     ignoreBuildErrors:true

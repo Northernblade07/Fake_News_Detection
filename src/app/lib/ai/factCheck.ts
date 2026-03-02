@@ -311,6 +311,7 @@ Rules:
 - Label "fake" ONLY if sources explicitly contradict the claim.
 Important:
 Lack of confirmation DOES NOT mean false.
+if the meaning of the claim matches with sources ,then it is real for more than 50%
 
 Claim:
 "${claim}?"

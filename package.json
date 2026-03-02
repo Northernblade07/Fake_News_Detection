@@ -9,13 +9,14 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf .next",
-  "build:clean": "rm -rf .next && next build"
+    "build:clean": "rm -rf .next && next build"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.10.0",
     "@ducanh2912/next-pwa": "^10.2.9",
     "@google/generative-ai": "^0.24.1",
     "@gsap/react": "^2.1.2",
+    "@napi-rs/canvas": "^0.1.95",
     "@typescript-eslint/eslint-plugin": "^8.43.0",
     "@typescript-eslint/parser": "^8.43.0",
     "@typescript-eslint/utils": "^8.43.0",

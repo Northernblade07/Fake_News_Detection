@@ -1,5 +1,5 @@
 // app/lib/pdf/extract.ts
-
+import "@/app/lib/polyfills/pdfNode";
 // Use the legacy ESM build for Node/Next.js server runtimes to avoid DOM APIs like DOMMatrix
 // @ts-expect-error ESM-only legacy entry
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
