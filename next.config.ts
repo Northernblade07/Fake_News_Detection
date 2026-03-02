@@ -57,23 +57,65 @@ const nextConfig: NextConfig = {
   // },
 
   images: {
-    domains: [
-      "assets.upstox.com",
-      "avatars.githubusercontent.com",
-      "www.hindustantimes.com",
-      "cdn.cnn.com",
-      "ichef.bbci.co.uk",
-      "images.wsj.net",
-      "static01.nyt.com",
-      "media.gq.com",
-      "cdn.vox-cdn.com",
-      "encrypted-tbn0.gstatic.com",
-      "images.financialexpressdigital.com",
-      "api.dicebear.com",
-      "lh3.googleusercontent.com",
-      "avatar.iran.liara.run",
-    ],
-  },
+  remotePatterns: [
+    {
+      protocol: "https",
+      hostname: "assets.upstox.com",
+    },
+    {
+      protocol: "https",
+      hostname: "avatars.githubusercontent.com",
+    },
+    {
+      protocol: "https",
+      hostname: "www.hindustantimes.com",
+    },
+    {
+      protocol: "https",
+      hostname: "cdn.cnn.com",
+    },
+    {
+      protocol: "https",
+      hostname: "ichef.bbci.co.uk",
+    },
+    {
+      protocol: "https",
+      hostname: "images.wsj.net",
+    },
+    {
+      protocol: "https",
+      hostname: "static01.nyt.com",
+    },
+    {
+      protocol: "https",
+      hostname: "media.gq.com",
+    },
+    {
+      protocol: "https",
+      hostname: "cdn.vox-cdn.com",
+    },
+    {
+      protocol: "https",
+      hostname: "encrypted-tbn0.gstatic.com",
+    },
+    {
+      protocol: "https",
+      hostname: "images.financialexpressdigital.com",
+    },
+    {
+      protocol: "https",
+      hostname: "api.dicebear.com",
+    },
+    {
+      protocol: "https",
+      hostname: "lh3.googleusercontent.com",
+    },
+    {
+      protocol: "https",
+      hostname: "avatar.iran.liara.run",
+    },
+  ],
+},
 };
 
 export default withNextIntl(nextConfig);

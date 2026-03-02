@@ -14,7 +14,7 @@ export default function OAuthButtons() {
     setLoading(provider);
     try {
       await signIn(provider, { callbackUrl: "/" });
-      console.log(provider)
+      // console.log(provider)
     } finally {
       setLoading(null);
     }

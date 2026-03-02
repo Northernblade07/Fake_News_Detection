@@ -41,7 +41,7 @@ type Props = {
 
 export default function DetectionResult({ result }: Props) {
 
-  console.log(result)
+  // console.log(result)
   const t = useTranslations("detect.result");
 
   const ref = useRef<HTMLDivElement>(null);

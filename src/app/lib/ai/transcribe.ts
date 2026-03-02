@@ -46,7 +46,7 @@ export async function transcribeWithGroq(
       response_format: "json",
     });
 
-    console.log("response from groq",response)
+    // console.log("response from groq",response)
     return response.text?.trim() || "";
   } catch (err) {   
     console.error("Groq transcription failed:", err);

@@ -131,8 +131,6 @@ export default function ExplorePage() {
         });
         const json: ExploreResponse = await res.json();
         if (!res.ok) throw new Error("Failed to load news");
-
-        // console.log(json)
         // Soft transition to keep layout stable during swap
         startTransition(() => {
           setItems(json.articles ?? []);

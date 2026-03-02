@@ -38,7 +38,7 @@ export default function ExternalImage({ src, alt = "", className }: ExternalImag
       return <Image src={src} alt={alt} fill className={`${className} h-full w-full object-cover`} />;
     }
   } catch (err) {
-    console.log(err)
+    // console.log(err)
     console.warn("Invalid image URL:", src);
   }
 

@@ -40,10 +40,10 @@ export default function RelatedNewsModal({ title, summary, lang, region, onClose
             region
           })
         });
-        console.log(res);
+        // console.log(res);
 
         const data = await res.json();
-        console.log(data)
+        // console.log(data)
         setArticles(data.items || []);
         setSource(data.source || "unknown");
       } catch (e) {

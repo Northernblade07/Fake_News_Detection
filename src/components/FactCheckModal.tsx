@@ -60,7 +60,7 @@ export default function FactCheckModal({
 
   const [loading, setLoading] = useState(true); // 🔥 NEW: skeleton loading
 
-  console.log(rag , "rag " , media, originalText , normalizedText)
+  // console.log(rag , "rag " , media, originalText , normalizedText)
   // PANEL ANIMATION + OPEN LOGIC
   useGSAP(() => {
     if (!open) return;

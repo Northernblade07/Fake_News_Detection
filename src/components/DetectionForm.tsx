@@ -132,14 +132,14 @@ useEffect(() => {
         method: "POST",
         body: fd,
       });
-      console.log(res)
+      // console.log(res)
 
       const json: DetectionResponse = await res.json();
 
       if (!res.ok || "error" in json) {
         throw new Error("error" in json ? json.error : t("errors.detectionFailed"));
       }
-      console.log(json);
+      // console.log(json);
       setResult(json);
       if ("serviceWorker" in navigator) {
   const reg = await navigator.serviceWorker.ready;
@@ -179,7 +179,7 @@ async function toggleRecording() {
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: true,
     });
-    console.log(stream)
+    // console.log(stream)
     let recorder: MediaRecorder;
 
     // Safari-safe constructor
@@ -224,8 +224,8 @@ async function toggleRecording() {
         });
 
         const data: { text?: string } = await res.json();
-        console.log(res)
-        console.log(data)
+        // console.log(res)
+        // console.log(data)
         if (data.text) {
          setText((prev) =>
   prev
@@ -234,7 +234,7 @@ async function toggleRecording() {
 );
         }
 
-        console.log(text)
+        // console.log(text)
       } catch (err) {
         console.error(err);
         alert("Transcription failed");

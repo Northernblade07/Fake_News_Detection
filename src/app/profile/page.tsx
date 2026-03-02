@@ -20,7 +20,8 @@ type UserProfile = {
   name: string;
   email:string
   role: string;
-  avatar?: string;
+  avatar?: string | undefined | null;
+  image?:string 
   coverPhoto?: string;
   phone?: string;
   preferences?: {
@@ -38,6 +39,8 @@ export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user?.id) return <div>Loading...</div>; // replace with loader animation if needed
 
+  // console.log(session)
+  // console.log(session.user)
   // SSR: fetch only the data needed for read-only display
   const user = (await User.findById(session.user.id)
     .select("-password -otp -resetToken")
@@ -82,13 +85,14 @@ const recentDetectionsTyped: Detection[] = (recentDetectionsRaw as unknown as Ar
 
   const preferences = user?.preferences || {};
 
+  // console.log(user , "user in profile")
   return (
     <main className={`${geistSans.variable} ${geistMono.variable} min-h-dvh text-slate-100 `}>
       <div className="mx-auto max-w-4xl p-6 shadow-xl bg-[#0b0f1a]/90 backdrop-blur">
         {/* SSR data */}
         <ProfileHeader
           user={{
-            avatar: user?.avatar,
+            avatar: session?.user?.image,
             coverPhoto: user?.coverPhoto,
             name: user?.name ? user?.name : user?.email.split("@")[0],
             role: user?.role,

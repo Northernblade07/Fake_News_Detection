@@ -24,6 +24,5 @@ export async function POST(req: NextRequest) {
     { upsert: true, new: true, setDefaultsOnInsert: true }
   );
 
-  console.log("Received new subscription from user:", session.user.id);
   return NextResponse.json({ ok: true });
 }

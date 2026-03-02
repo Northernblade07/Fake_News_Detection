@@ -72,8 +72,6 @@ const config: NextAuthConfig = {
 
   callbacks: {
     async jwt({ token, user, account, profile }) {
-      console.log("🌀 JWT CALLBACK", { account, profile, token });
-
       // When user logs in via Credentials
       if (user) {
         token.id = user.id;

@@ -62,15 +62,12 @@ export default function DashboardPage() {
 
       // Fetch recent jobs
       const recentRes = await fetch('/api/dashboard/recent?limit=10', { cache: 'no-store' });
-      console.log('Recent jobs response status:', recentRes.status);
       
       if (!recentRes.ok) {
         throw new Error(`Recent jobs API error: ${recentRes.status}`);
       }
 
       const recentJobs = await recentRes.json();
-      console.log('Recent jobs data:', recentJobs);
-      console.log('Is array?', Array.isArray(recentJobs));
 
       // Safely set jobs with fallback to empty array
       const jobsArray = Array.isArray(recentJobs) ? recentJobs : [];
