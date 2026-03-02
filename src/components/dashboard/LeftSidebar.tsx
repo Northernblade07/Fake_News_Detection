@@ -15,7 +15,7 @@ export function LeftSidebar() {
     { name: t('dashboard'), href: '/dashboard', icon: LayoutGrid },
     { name: t('detect'), href: '/detect', icon: ScanLine },
     { name: t('profile'), href: '/profile', icon: User },
-    { name: t('settings'), href: '/settings', icon: Settings },
+    // { name: t('settings'), href: '/settings', icon: Settings },
   ];
   
   return (
